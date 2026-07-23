@@ -1,0 +1,871 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@plugin "daisyui";
+
+.rich-text-content {
+  line-height: 1.6;
+  color: #000000 !important;
+}
+
+.rich-text-content p:not([style*="color"]),
+.rich-text-content span:not([style*="color"]),
+.rich-text-content li:not([style*="color"]),
+.rich-text-content strong:not([style*="color"]),
+.rich-text-content em:not([style*="color"]),
+.rich-text-content h1:not([style*="color"]),
+.rich-text-content h2:not([style*="color"]),
+.rich-text-content h3:not([style*="color"]),
+.rich-text-content h4:not([style*="color"]),
+.rich-text-content h5:not([style*="color"]),
+.rich-text-content h6:not([style*="color"]),
+.rich-text-content blockquote:not([style*="color"]) {
+  color: #000000 !important;
+}
+
+
+.rich-text-content ul {
+  list-style-type: disc !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.rich-text-content ol {
+  list-style-type: decimal !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.rich-text-content li {
+  margin-bottom: 0.25rem !important;
+}
+
+.rich-text-content p {
+  margin-bottom: 1rem !important;
+}
+
+.rich-text-content h1,
+.rich-text-content h2,
+.rich-text-content h3 {
+  font-weight: 700 !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.rich-text-content a {
+  color: #4f46e5 !important;
+  text-decoration: underline !important;
+}
+
+/* Force table headers to be readable — overrides muted inline colors from CMS */
+.rich-text-content table th,
+.rich-text-content table th *,
+.rich-text-content table thead td,
+.rich-text-content table thead td * {
+  color: #0f172a !important;
+  font-weight: 600 !important;
+  background: #f8fafc !important;
+}
+
+.rich-text-content table td,
+.rich-text-content table td * {
+  color: #1e293b !important;
+}
+
+/* TipTap / General Rich Text Styles */
+.rich-text-content [style*="font-size"] {
+  display: inline-block;
+  /* Helps markers inherit sizing in some browsers */
+}
+
+/* Ensure list markers scale with parent li's font-size (which TipTap now applies directly) */
+.rich-text-content li::marker {
+  font-size: inherit !important;
+}
+
+/* Base list styling for TipTap output */
+.rich-text-content ul {
+  list-style-type: disc !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.rich-text-content ol {
+  list-style-type: decimal !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+/* Custom Theme - Pink Aesthetic */
+:root {
+  --background: #FFF5F7;
+  --foreground: #222222;
+  --primary: #FF4F87;
+  --primary-dark: #E83F78;
+  --secondary: #FF4F87;
+  --accent: #FF2E6A;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  /* Gray scale — pink-tinted light end, neutral dark end */
+  --gray-50: #FFF5F7;
+  --gray-100: #FFEEF3;
+  --gray-200: #F3D6E1;
+  --gray-300: #e8c4d4;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #2d2d2d;
+  --gray-900: #222222;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.02), 0 1px 2px -1px rgb(0 0 0 / 0.02);
+  --shadow-md:
+    0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-lg:
+    0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+  /* Professional Radius System */
+  --radius-xs: 0.1875rem;
+  /* 3px — tiny chips, inline badges */
+  --radius-sm: 0.25rem;
+  /* 4px — tags, status badges */
+  --radius-md: 0.375rem;
+  /* 6px — buttons, inputs, form elements */
+  --radius-lg: 0.5rem;
+  /* 8px — cards, modals, dropdowns */
+  --radius-xl: 0.625rem;
+  /* 10px — hero sections, large containers */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-gray-50: var(--gray-50);
+  --color-gray-100: var(--gray-100);
+  --color-gray-200: var(--gray-200);
+  --color-gray-300: var(--gray-300);
+  --color-gray-400: var(--gray-400);
+  --color-gray-500: var(--gray-500);
+  --color-gray-600: var(--gray-600);
+  --color-gray-700: var(--gray-700);
+  --color-gray-800: var(--gray-800);
+  --color-gray-900: var(--gray-900);
+  --font-sans: var(--font-open-sans), "Open Sans", system-ui, sans-serif;
+}
+
+/* Reset and Base */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family:
+    var(--font-open-sans),
+    "Open Sans",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  line-height: 1.6;
+  overflow-x: clip;
+  width: 100%;
+}
+
+/* Delay top loader — don't flash for fast navigations (<400ms) */
+#nprogress {
+  visibility: hidden;
+  animation: nprogress-delayed-show 0.1s linear forwards;
+  animation-delay: 400ms;
+}
+
+@keyframes nprogress-delayed-show {
+  to {
+    visibility: visible;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gray-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-400);
+}
+
+/* Utility Classes */
+.container {
+  width: 100%;
+  max-width: 1920px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/* Card Styles */
+.card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--gray-100);
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Button Base */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.btn:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+.btn-secondary {
+  background: var(--gray-100);
+  color: var(--gray-700);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--gray-200);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--gray-200);
+  color: var(--gray-700);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: var(--gray-50);
+  border-color: var(--gray-400);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #dc2626;
+}
+
+.btn-success {
+  background: var(--success);
+  color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+  background: #059669;
+}
+
+/* Input Styles */
+.input {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  background: white;
+  color: var(--foreground);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  height: 2.5rem;
+  line-height: 1.5;
+}
+
+select.input {
+  appearance: none;
+  padding-top: 0.1rem;
+  padding-bottom: 0.15rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230f172a' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 12px;
+  cursor: pointer;
+  margin: 0;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.input::placeholder {
+  color: var(--gray-400);
+}
+
+.input:disabled {
+  background: var(--gray-50);
+  cursor: not-allowed;
+}
+
+/* Badge Styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+}
+
+.badge-primary {
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--primary);
+}
+
+.badge-success {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success);
+}
+
+.badge-warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--warning);
+}
+
+.badge-danger {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+}
+
+.badge-gray {
+  background: var(--gray-100);
+  color: var(--gray-600);
+}
+
+/* Table Styles */
+.table-container {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-200);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  background: var(--gray-50);
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray-600);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.table td {
+  padding: 0.875rem 1rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.table tbody tr:hover {
+  background: var(--gray-50);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Loading Spinner */
+.spinner {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--gray-200);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Fade In Animation */
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide In Animation */
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Buy Now / Order Now Bell Animation */
+@keyframes bellRing {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  15% {
+    transform: rotate(5deg) scale(1.01);
+  }
+  35% {
+    transform: rotate(-5deg) scale(1.01);
+  }
+  55% {
+    transform: rotate(3deg) scale(1.01);
+  }
+  75% {
+    transform: rotate(-3deg) scale(1.01);
+  }
+}
+
+.animate-bell {
+  animation: bellRing 1.6s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+/* ==================== POS Terminal Styles ==================== */
+
+/* POS Dark Theme */
+.pos-terminal {
+  --pos-bg: #0f1117;
+  --pos-surface: #1a1d27;
+  --pos-surface-hover: #232736;
+  --pos-surface-active: #2a2e3d;
+  --pos-border: #2a2e3d;
+  --pos-border-light: #363b4e;
+  --pos-text: #e8eaed;
+  --pos-text-muted: #9aa0b4;
+  --pos-text-dim: #6b7186;
+  --pos-accent: #6366f1;
+  --pos-accent-hover: #818cf8;
+  --pos-success: #22c55e;
+  --pos-success-hover: #16a34a;
+  --pos-danger: #ef4444;
+  --pos-warning: #f59e0b;
+  --pos-blue: #3b82f6;
+  --pos-orange: #f97316;
+  background: var(--pos-bg);
+  color: var(--pos-text);
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+.pos-terminal * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--pos-border) transparent;
+}
+
+.pos-terminal ::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.pos-terminal ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.pos-terminal ::-webkit-scrollbar-thumb {
+  background: var(--pos-border);
+  border-radius: 10px;
+}
+
+/* POS Input */
+.pos-input {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  border: 1px solid var(--pos-border);
+  border-radius: 0.5rem;
+  background: var(--pos-surface);
+  color: var(--pos-text);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  outline: none;
+}
+
+.pos-input:focus {
+  border-color: var(--pos-accent);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.pos-input::placeholder {
+  color: var(--pos-text-dim);
+}
+
+/* POS Button Base */
+.pos-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+  outline: none;
+  white-space: nowrap;
+}
+
+.pos-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pos-btn-primary {
+  background: var(--pos-accent);
+  color: white;
+}
+
+.pos-btn-primary:hover:not(:disabled) {
+  background: var(--pos-accent-hover);
+}
+
+.pos-btn-success {
+  background: var(--pos-success);
+  color: white;
+}
+
+.pos-btn-success:hover:not(:disabled) {
+  background: var(--pos-success-hover);
+}
+
+.pos-btn-danger {
+  background: var(--pos-danger);
+  color: white;
+}
+
+.pos-btn-danger:hover:not(:disabled) {
+  background: #dc2626;
+}
+
+.pos-btn-ghost {
+  background: transparent;
+  color: var(--pos-text-muted);
+  border-color: var(--pos-border);
+}
+
+.pos-btn-ghost:hover:not(:disabled) {
+  background: var(--pos-surface-hover);
+  color: var(--pos-text);
+}
+
+/* Barcode scan animation */
+@keyframes barcodeScan {
+  0% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.6);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(99, 102, 241, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+  }
+}
+
+.pos-scan-pulse {
+  animation: barcodeScan 0.6s ease-out;
+}
+
+/* Cart item enter animation */
+@keyframes cartItemEnter {
+  from {
+    opacity: 0;
+    transform: translateX(-12px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.pos-cart-item-enter {
+  animation: cartItemEnter 0.25s ease-out;
+}
+
+/* Success checkmark animation */
+@keyframes posSuccess {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.pos-success-anim {
+  animation: posSuccess 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* POS Grand Total */
+.pos-grand-total {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Product card hover */
+.pos-product-card {
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.pos-product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.pos-product-card:active {
+  transform: translateY(0);
+}
+
+/* Category pill */
+.pos-category-pill {
+  transition: all 0.15s ease;
+}
+
+.pos-category-pill.active {
+  background: var(--pos-accent);
+  color: white;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+/* ==================== Receipt Print Styles ==================== */
+@media print {
+  /* Hide everything and collapse space */
+  body * {
+    visibility: hidden !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+  }
+
+  /* Reveal the receipt — higher specificity than body * */
+  .pos-receipt,
+  .pos-receipt * {
+    visibility: visible !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    line-height: 1.4 !important;
+    font-size: 11px !important;
+  }
+
+  .pos-receipt {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 80mm !important;
+    max-width: 80mm !important;
+    padding: 4mm !important;
+    font-family: "Courier New", Courier, monospace !important;
+    color: #000 !important;
+    background: #fff !important;
+    z-index: 99999 !important;
+  }
+
+  .pos-receipt .receipt-divider {
+    border: none !important;
+    border-top: 1px dashed #000 !important;
+    margin: 4px 0 !important;
+    height: auto !important;
+  }
+
+  .pos-receipt table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  .pos-receipt table th,
+  .pos-receipt table td {
+    padding: 2px 0 !important;
+    text-align: left !important;
+  }
+
+  .pos-receipt .text-right {
+    text-align: right !important;
+  }
+
+  .pos-receipt .text-center {
+    text-align: center !important;
+  }
+
+  .pos-receipt .font-bold {
+    font-weight: 700 !important;
+  }
+
+  .no-print,
+  .print-hide {
+    display: none !important;
+  }
+
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  @page {
+    margin: 0;
+  }
+}
+
+/* Invoice prints in a dedicated popup window — no print CSS needed here */
+
+/* Responsive Grid Utility - Hide items beyond 2 rows */
+.responsive-grid-rows-2 > *:nth-child(n + 5) {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .responsive-grid-rows-2 > *:nth-child(n + 5) {
+    display: block;
+  }
+  .responsive-grid-rows-2 > *:nth-child(n + 7) {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .responsive-grid-rows-2 > *:nth-child(n + 7) {
+    display: block;
+  }
+  .responsive-grid-rows-2 > *:nth-child(n + 9) {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-grid-rows-2 > *:nth-child(n + 9) {
+    display: block;
+  }
+  .responsive-grid-rows-2 > *:nth-child(n + 11) {
+    display: none;
+  }
+}
+
+@media (min-width: 1536px) {
+  .responsive-grid-rows-2 > *:nth-child(n + 11) {
+    display: block;
+  }
+  .responsive-grid-rows-2 > *:nth-child(n + 13) {
+    display: none;
+  }
+}
+
+.responsive-grid-rows-2.show-all > * {
+  display: block !important;
+}
