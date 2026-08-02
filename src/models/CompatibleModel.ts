@@ -36,7 +36,6 @@ const CompatibleModelSchema = new Schema<ICompatibleModelDocument>(
 );
 
 CompatibleModelSchema.index({ name: 'text' });
-CompatibleModelSchema.index({ slug: 1 });
 
 const CompatibleModel: Model<ICompatibleModelDocument> = mongoose.models.CompatibleModel || mongoose.model<ICompatibleModelDocument>('CompatibleModel', CompatibleModelSchema);
 

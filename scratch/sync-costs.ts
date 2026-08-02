@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import dbConnect from '../src/lib/db';
 import Order from '../src/models/Order';
 import Product from '../src/models/Product';
@@ -18,10 +17,10 @@ async function syncCosts() {
 
     for (const order of orders) {
         let changed = false;
-        
+
         for (let i = 0; i < order.products.length; i++) {
             const item = order.products[i];
-            
+
             if (item.unitProductCost === undefined || item.unitProductCost === null) {
                 const product = await Product.findById(item.productId);
                 if (product) {
