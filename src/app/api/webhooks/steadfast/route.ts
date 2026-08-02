@@ -56,9 +56,9 @@ export async function POST(req: Request) {
                     }
                     updated = true;
                 }
-            } else if (statusStr.includes('cancelled') && !statusStr.includes('approval_pending')) {
-                if (order.orderStatus !== 'Cancelled') {
-                    order.orderStatus = 'Cancelled';
+            } else if ((statusStr.includes('cancel') || statusStr.includes('return')) && !statusStr.includes('approval_pending')) {
+                if (order.orderStatus !== 'Cancelled' && order.orderStatus !== 'Returned') {
+                    order.orderStatus = statusStr.includes('return') ? 'Returned' : 'Cancelled';
                     order.paymentStatus = 'Failed';
                     updated = true;
                 }
