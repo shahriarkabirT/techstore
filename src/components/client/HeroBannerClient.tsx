@@ -154,12 +154,14 @@ export default function HeroBannerClient({ banners }: HeroBannerClientProps) {
         );
     }
 
+    const hasSecondary = secondaryTopBanners.length > 0 || secondaryBottomBanners.length > 0;
+
     return (
         <div className="container mx-auto px-4 mt-4 lg:mt-6 mb-8 xl:px-0">
             <div className="flex flex-col lg:flex-row gap-4 w-full">
                 {/* Primary Banners Carousel */}
                 <div 
-                    className="relative w-full lg:w-[65%] xl:w-[70%] aspect-video md:aspect-[13/7]  overflow-hidden rounded-xl bg-gray-900 shadow-md group select-none"
+                    className={`relative ${hasSecondary ? 'w-full lg:w-[65%] xl:w-[70%]' : 'w-full'} aspect-video md:aspect-[13/7]  overflow-hidden rounded-xl bg-gray-900 shadow-md group select-none`}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => { setIsHovered(false); handleDragEnd(); }}
                 >
@@ -263,7 +265,7 @@ export default function HeroBannerClient({ banners }: HeroBannerClientProps) {
                 </div>
 
                 {/* Secondary Banners Stack */}
-                {(secondaryTopBanners.length > 0 || secondaryBottomBanners.length > 0) && (
+                {hasSecondary && (
                     <div className="relative flex flex-row lg:flex-col lg:w-[35%] xl:w-[30%] gap-3 sm:gap-4 h-[140px] sm:h-[200px] md:h-[260px] lg:h-auto">
                         
                         {/* Top Block: Rotates through all uploaded secondary-top banners */}
