@@ -7,7 +7,7 @@ export PATH=$PATH:/root/.nvm/versions/node/v24.14.1/bin
 
 echo "🚀 Starting deployment..."
 
-cd /var/www/nextjs_ecom
+cd /var/www/techstore
 
 echo "📦 Pulling latest code..."
 git pull origin main
@@ -19,6 +19,6 @@ echo "🔨 Building app..."
 pnpm run build
 
 echo "🔄 Restarting PM2..."
-pm2 restart 0
+pm2 restart tech_store
 
 echo "✅ Deployment done!" 

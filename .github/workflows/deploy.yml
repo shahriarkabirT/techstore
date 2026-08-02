@@ -18,5 +18,5 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 2221
           script: |
-            cd /var/www/nextjs_ecom
+            cd /var/www/techstore
             ./deploy.sh

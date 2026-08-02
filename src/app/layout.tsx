@@ -7,7 +7,7 @@ import NextTopLoader from 'nextjs-toploader';
 import ReduxProvider from '@/components/providers/ReduxProvider';
 import AuthProvider from '@/components/providers/AuthProvider';
 import { Toaster } from 'react-hot-toast';
-import DynamicFavicon from '@/components/shared/DynamicFavicon';
+
 import LazyChatWidget from '@/components/chat/LazyChatWidget';
 import { Suspense } from 'react';
 import dbConnect from '@/lib/db';
@@ -164,7 +164,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                 )}
 
                 <NextTopLoader
-                    color="#FF4F87"
+                    color="#28292b"
                     initialPosition={0.08}
                     crawlSpeed={200}
                     height={3}
@@ -172,12 +172,11 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                     showSpinner={false}
                     easing="ease"
                     speed={200}
-                    shadow="0 0 10px #2563eb,0 0 5px #2563eb"
+                    shadow="0 0 10px #28292b,0 0 5px #555"
                 />
                 <ReduxProvider>
                     <AuthProvider>
                         <Toaster position="top-right" />
-                        <DynamicFavicon />
                         <Suspense fallback={null}>
                                 {children}
                         </Suspense>

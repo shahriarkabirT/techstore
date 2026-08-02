@@ -93,10 +93,10 @@ export default function CategoryBar({ initialCategories = [] }: CategoryBarProps
             <div
                 className={`hidden md:block w-full z-40 transition-all duration-300 ${isSticky
                     ? `fixed top-0 left-0 right-0 shadow-md ${hoveredCat
-                        ? 'bg-[#FF5087]'
-                        : 'bg-[#FF5087]/95 backdrop-blur-md hover:bg-[#FF5087] hover:backdrop-blur-none'
+                        ? 'bg-[#28292b]'
+                        : 'bg-[#28292b]/95 backdrop-blur-md hover:bg-[#28292b] hover:backdrop-blur-none'
                     }`
-                    : 'relative bg-[#FF5087] shadow-sm'
+                    : 'relative bg-[#28292b] shadow-sm'
                     }`}
                 onMouseLeave={closeDropdown}
             >
@@ -107,7 +107,7 @@ export default function CategoryBar({ initialCategories = [] }: CategoryBarProps
                         {canScrollLeft && (
                             <button
                                 onClick={() => scroll('left')}
-                                className="absolute left-0 z-10 h-[50px] 2xl:h-[62px] w-12 flex items-center justify-start pl-1 cursor-pointer bg-gradient-to-r from-[#FF5087] via-[#FF5087]/95 to-transparent"
+                                className="absolute left-0 z-10 h-[50px] 2xl:h-[62px] w-12 flex items-center justify-start pl-1 cursor-pointer bg-gradient-to-r from-[#28292b] via-[#28292b]/95 to-transparent"
                                 aria-label="Scroll left"
                             >
                                 <div className="w-8 h-8 rounded-full bg-white/10 shadow-md border border-white/20 flex items-center justify-center hover:bg-white/20 hover:scale-105 transition-all duration-200">
@@ -239,7 +239,7 @@ export default function CategoryBar({ initialCategories = [] }: CategoryBarProps
                         {canScrollRight && (
                             <button
                                 onClick={() => scroll('right')}
-                                className="absolute right-0 z-10 h-[50px] 2xl:h-[62px] w-12 flex items-center justify-end pr-1 cursor-pointer bg-gradient-to-l from-[#FF5087] via-[#FF5087]/95 to-transparent"
+                                className="absolute right-0 z-10 h-[50px] 2xl:h-[62px] w-12 flex items-center justify-end pr-1 cursor-pointer bg-gradient-to-l from-[#28292b] via-[#28292b]/95 to-transparent"
                                 aria-label="Scroll right"
                             >
                                 <div className="w-8 h-8 rounded-full bg-white/10 shadow-md border border-white/20 flex items-center justify-center hover:bg-white/20 hover:scale-105 transition-all duration-200">
