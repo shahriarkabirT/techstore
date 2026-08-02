@@ -142,7 +142,7 @@ export default function MobileBottomNavbar() {
                 )}
             </div>
 
-            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#28292b] border-t border-white/10 z-[70] px-2 pb-safe-area-inset-bottom shadow-[0_-4px_20px_rgba(0,0,0,0.25)]">
+            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-primary border-t border-white/10 z-[70] px-2 pb-safe-area-inset-bottom shadow-[0_-4px_20px_rgba(0,0,0,0.25)]">
                 <div className="flex items-center justify-around h-16 max-w-md mx-auto">
                     {navItems.map((item) => {
                         const isActive = !item.isAccount && !item.isCart && !item.isCategories && pathname === item.href;

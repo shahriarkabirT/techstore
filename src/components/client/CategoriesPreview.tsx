@@ -19,7 +19,7 @@ export default async function CategoriesPreview() {
     if (categories.length === 0) return null;
 
     return (
-        <section className="py-6 md:py-10 bg-transparent">
+        <section className="pt-2 pb-6 md:pt-4 md:pb-10 bg-transparent">
             <div className="container mx-auto px-4 xl:px-0">
                 <CategoriesSliderClient categories={categories} />
             </div>

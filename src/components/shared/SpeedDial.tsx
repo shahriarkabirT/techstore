@@ -126,7 +126,7 @@ export default function SpeedDial({ initialSettings }: SpeedDialProps) {
                     borderRadius: '9999px',
                 }}
             >
-                <ChevronUp size={30} strokeWidth={2} className="text-[#FF4F87] transition-transform duration-300 scroll-arrow" />
+                <ChevronUp size={30} strokeWidth={2} className="text-primary transition-transform duration-300 scroll-arrow" />
             </button>
 
             {/* Custom Flex FAB Container */}
@@ -135,7 +135,7 @@ export default function SpeedDial({ initialSettings }: SpeedDialProps) {
                 <div
                     role="button"
                     onClick={() => setIsOpen(!isOpen)}
-                    className="btn btn-circle !p-0 w-14 h-14 rounded-full bg-gradient-to-tr from-[#FF4F87] to-[#FF75A0] text-white hover:brightness-110 shadow-xl shadow-[#FF4F87]/30 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] absolute cursor-pointer speed-dial-trigger border-none"
+                    className="btn btn-circle !p-0 w-14 h-14 rounded-full bg-gradient-to-tr from-primary to-primary/80 text-white hover:brightness-110 shadow-xl shadow-black/30 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] absolute cursor-pointer speed-dial-trigger border-none"
                     style={{
                         transform: `scale(${isOpen ? 0 : 1})`,
                         opacity: isOpen ? 0 : 1,
@@ -159,7 +159,7 @@ export default function SpeedDial({ initialSettings }: SpeedDialProps) {
                         borderRadius: '9999px',
                     }}
                 >
-                    <X size={34} strokeWidth={2.5} className="text-[#FF4F87]" />
+                    <X size={34} strokeWidth={2.5} className="text-primary" />
                 </button>
 
                 {/* 2. WhatsApp Option (Fans Left) */}

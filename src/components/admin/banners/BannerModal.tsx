@@ -104,7 +104,14 @@ export default function BannerModal({
                         )}
 
                         <div className="col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Banner Image</label>
+                            <div className="flex items-center justify-between mb-1">
+                                <label className="block text-sm font-medium text-gray-700">Banner Image</label>
+                                {(formData.position === 'secondary-top' || formData.position === 'secondary-bottom' || formData.position === 'secondary') && (
+                                    <span className="text-[11px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-100">
+                                        Note: If using both Top & Bottom, recommended ratio is 16:9. If only using one, use 13:5.
+                                    </span>
+                                )}
+                            </div>
                             <ImageUpload
                                 images={formData.image ? [formData.image] : []}
                                 onImagesChange={(imgs) => {
@@ -113,14 +120,14 @@ export default function BannerModal({
                                 }}
                                 onError={(msg) => setUploadError(msg)}
                                 aspectRatio={
-                                    formData.position === 'primary' ? '13:7' :
+                                    formData.position === 'primary' ? '21:9' :
                                     formData.position === 'promotional-left' || formData.position === 'promotional-right' ? '16:9' :
-                                    '16:9'
+                                    undefined // Allow flexible ratio for secondary banners
                                 }
                                 recommendedSize={
-                                    formData.position === 'primary' ? '1300x700px' :
+                                    formData.position === 'primary' ? '1200x350px' :
                                     formData.position === 'promotional-left' || formData.position === 'promotional-right' ? '800x450px' :
-                                    '800x450px'
+                                    '800x450px (if both top/bottom) or 800x300px (if one)'
                                 }
                             />
                             {uploadError && (

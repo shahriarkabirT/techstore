@@ -140,7 +140,7 @@ export default function HeroBannerClient({ banners }: HeroBannerClientProps) {
     if (!banners || banners.length === 0) {
         return (
             <div className="container mx-auto px-4 mt-4 lg:mt-6 mb-8 xl:px-0">
-                <Link href="/products" className="relative block aspect-video md:aspect-[13/7] w-full bg-gray-900 flex items-center justify-center overflow-hidden rounded-xl">
+                <Link href="/products" className="relative block aspect-[16/7] md:aspect-[21/9] w-full bg-gray-900 flex items-center justify-center overflow-hidden rounded-xl">
                     <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent z-10"></div>
                     <div className="relative z-20 px-4 text-white text-center">
                         <h1 className="text-2xl md:text-4xl font-black mb-2 tracking-tight">Luxury Defined</h1>
@@ -157,11 +157,11 @@ export default function HeroBannerClient({ banners }: HeroBannerClientProps) {
     const hasSecondary = secondaryTopBanners.length > 0 || secondaryBottomBanners.length > 0;
 
     return (
-        <div className="container mx-auto px-4 mt-4 lg:mt-6 mb-8 xl:px-0">
+        <div className="container mx-auto px-4 mt-4 lg:mt-6 mb-2 md:mb-4 xl:px-0">
             <div className="flex flex-col lg:flex-row gap-4 w-full">
                 {/* Primary Banners Carousel */}
                 <div 
-                    className={`relative ${hasSecondary ? 'w-full lg:w-[65%] xl:w-[70%]' : 'w-full'} aspect-video md:aspect-[13/7]  overflow-hidden rounded-xl bg-gray-900 shadow-md group select-none`}
+                    className={`relative ${hasSecondary ? 'w-full lg:w-[65%] xl:w-[70%]' : 'w-full'} aspect-[16/7] md:aspect-[21/9] overflow-hidden rounded-xl bg-gray-900 shadow-md group select-none`}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => { setIsHovered(false); handleDragEnd(); }}
                 >
@@ -266,10 +266,10 @@ export default function HeroBannerClient({ banners }: HeroBannerClientProps) {
 
                 {/* Secondary Banners Stack */}
                 {hasSecondary && (
-                    <div className="relative flex flex-row lg:flex-col lg:w-[35%] xl:w-[30%] gap-3 sm:gap-4 h-[140px] sm:h-[200px] md:h-[260px] lg:h-auto">
+                    <div className="relative hidden lg:flex flex-row lg:flex-col lg:w-[35%] xl:w-[30%] gap-3 sm:gap-4 h-[140px] sm:h-[200px] md:h-[260px] lg:h-auto">
                         
                         {/* Top Block: Rotates through all uploaded secondary-top banners */}
-                        {secondaryTopBanners.length > 0 ? (
+                        {secondaryTopBanners.length > 0 && (
                             <div className="relative flex-1 rounded-xl overflow-hidden shadow-md bg-gray-100 group shrink-0">
                                 {secondaryTopBanners.map((banner, index) => (
                                     <Link 
@@ -301,12 +301,10 @@ export default function HeroBannerClient({ banners }: HeroBannerClientProps) {
                                     </Link>
                                 ))}
                             </div>
-                        ) : (
-                            <div className="hidden lg:block flex-1 shrink-0 bg-gray-100 rounded-xl"></div>
                         )}
 
                         {/* Bottom Block: Rotates through all uploaded secondary-bottom banners */}
-                        {secondaryBottomBanners.length > 0 ? (
+                        {secondaryBottomBanners.length > 0 && (
                             <div className="relative flex-1 rounded-xl overflow-hidden shadow-md bg-gray-100 group shrink-0">
                                 {secondaryBottomBanners.map((banner, index) => (
                                     <Link 
@@ -338,8 +336,6 @@ export default function HeroBannerClient({ banners }: HeroBannerClientProps) {
                                     </Link>
                                 ))}
                             </div>
-                        ) : (
-                            <div className="hidden lg:block flex-1 shrink-0 bg-gray-100 rounded-xl"></div>
                         )}
                     </div>
                 )}

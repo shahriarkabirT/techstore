@@ -19,4 +19,5 @@ jobs:
           port: 22
           script: |
             cd /var/www/techstore
+            chmod +x deploy.sh
             ./deploy.sh
