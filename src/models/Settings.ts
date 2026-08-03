@@ -97,6 +97,10 @@ const SettingsSchema = new Schema<ISettingsDocument>(
             type: String,
             trim: true,
         },
+        metaAccessToken: {
+            type: String,
+            trim: true,
+        },
         googleClientId: {
             type: String,
             trim: true,

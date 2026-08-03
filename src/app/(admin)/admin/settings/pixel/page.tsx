@@ -29,6 +29,7 @@ function MarketingForm({ initialData }: { initialData: any }) {
         facebookPixelId: initialData.facebookPixelId || '',
         googleTagManagerId: initialData.googleTagManagerId || '',
         tiktokPixelId: initialData.tiktokPixelId || '',
+        metaAccessToken: initialData.metaAccessToken || '',
     });
 
     const handleCancel = () => {
@@ -36,6 +37,7 @@ function MarketingForm({ initialData }: { initialData: any }) {
             facebookPixelId: initialData.facebookPixelId || '',
             googleTagManagerId: initialData.googleTagManagerId || '',
             tiktokPixelId: initialData.tiktokPixelId || '',
+            metaAccessToken: initialData.metaAccessToken || '',
         });
         setIsEditing(false);
     };
@@ -96,6 +98,21 @@ function MarketingForm({ initialData }: { initialData: any }) {
                             <p className="mt-2 text-xs text-gray-500 flex items-center gap-1">
                                 <Info className="w-3 h-3" />
                                 Your Meta Pixel ID from Events Manager.
+                            </p>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-1">Conversions API Access Token</label>
+                            <input
+                                type="text"
+                                value={formData.metaAccessToken}
+                                onChange={(e) => setFormData({ ...formData, metaAccessToken: e.target.value })}
+                                disabled={!isEditing}
+                                placeholder={isEditing ? 'e.g. EAABxyz...' : 'Not set'}
+                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all disabled:bg-transparent disabled:border-transparent disabled:shadow-none disabled:text-gray-800 disabled:px-0 disabled:font-medium disabled:cursor-default"
+                            />
+                            <p className="mt-2 text-xs text-gray-500 flex items-center gap-1">
+                                <Info className="w-3 h-3" />
+                                Your Meta Conversions API Access Token. Required for Server-Side CAPI tracking.
                             </p>
                         </div>
                     </div>

@@ -22,7 +22,7 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { facebookPixelId, googleTagManagerId, tiktokPixelId } = body;
+        const { facebookPixelId, googleTagManagerId, tiktokPixelId, metaAccessToken } = body;
 
         await dbConnect();
         const settings = await Settings.findOneAndUpdate(
@@ -32,6 +32,7 @@ export async function POST(req: Request) {
                     facebookPixelId,
                     googleTagManagerId,
                     tiktokPixelId,
+                    metaAccessToken,
                 }
             },
             { new: true, upsert: true }
