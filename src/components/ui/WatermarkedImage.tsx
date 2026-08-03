@@ -50,7 +50,7 @@ export default function WatermarkedImage({
       ctx.drawImage(img, 0, 0);
 
       // Configure watermark styles
-      ctx.fillStyle = "rgba(128, 128, 128, 0.4)"; // Gray transparent
+      ctx.fillStyle = "rgba(128, 128, 128, 0.15)"; // Very faint gray
       const fontSize = Math.max(24, Math.floor(canvas.width / 12));
       ctx.font = `bold ${fontSize}px sans-serif`;
       ctx.textAlign = "center";
@@ -62,7 +62,7 @@ export default function WatermarkedImage({
       ctx.fillText(watermarkText, 0, 0);
       
       // Optional: Add a very faint white stroke so it's visible on both dark and light backgrounds
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
       ctx.lineWidth = Math.max(1, fontSize / 20);
       ctx.strokeText(watermarkText, 0, 0);
 
@@ -88,8 +88,10 @@ export default function WatermarkedImage({
     }
   };
 
+  const positionClass = className.includes('absolute') || className.includes('fixed') ? '' : 'relative';
+
   return (
-    <div className={`relative group overflow-hidden ${className}`} style={style}>
+    <div className={`${positionClass} group overflow-hidden w-full h-full ${className}`} style={style}>
       {/* The main image */}
       <Image
         src={src}
@@ -102,8 +104,8 @@ export default function WatermarkedImage({
       {/* Visual CSS overlay for the website (matches the downloaded look) */}
       <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
         <div 
-          className="text-gray-500/40 font-bold select-none whitespace-nowrap transform -rotate-45"
-          style={{ fontSize: 'clamp(1.5rem, 8vw, 4rem)', WebkitTextStroke: '1px rgba(255,255,255,0.3)' }}
+          className="text-gray-500/15 font-bold select-none whitespace-nowrap transform -rotate-45"
+          style={{ fontSize: 'clamp(1.5rem, 8vw, 4rem)', WebkitTextStroke: '1px rgba(255,255,255,0.1)' }}
         >
           {watermarkText}
         </div>

@@ -76,14 +76,14 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
                                 <WatermarkedImage
                                     src={product.images[0]}
                                     alt={product.title}
-                                    className={`absolute inset-0 transition-all duration-700 group-hover:scale-110 ${product.images[1] ? 'group-hover:opacity-0' : ''}`}
+                                    className={`absolute inset-0 w-full h-full transition-all duration-700 group-hover:scale-110 ${product.images[1] ? 'group-hover:opacity-0' : ''}`}
                                     imageClassName="object-cover"
                                 />
                                 {product.images[1] && (
                                     <WatermarkedImage
                                         src={product.images[1]}
                                         alt={product.title}
-                                        className="absolute inset-0 transition-all duration-700 scale-110 opacity-0 group-hover:opacity-100 group-hover:scale-100"
+                                        className="absolute inset-0 w-full h-full transition-all duration-700 scale-110 opacity-0 group-hover:opacity-100 group-hover:scale-100"
                                         imageClassName="object-cover"
                                     />
                                 )}
@@ -225,14 +225,14 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
                             <WatermarkedImage
                                 src={product.images[0]}
                                 alt={product.title}
-                                className={`absolute inset-0 transition-transform duration-700 ease-out group-hover/card:scale-105 ${product.images[1] ? 'group-hover/card:opacity-0' : ''}`}
+                                className={`absolute inset-0 w-full h-full transition-transform duration-700 ease-out group-hover/card:scale-105 ${product.images[1] ? 'group-hover/card:opacity-0' : ''}`}
                                 imageClassName="object-cover"
                             />
                             {product.images[1] && (
                                 <WatermarkedImage
                                     src={product.images[1]}
                                     alt={product.title}
-                                    className="absolute inset-0 transition-all duration-700 ease-out scale-105 opacity-0 group-hover/card:opacity-100 group-hover/card:scale-100"
+                                    className="absolute inset-0 w-full h-full transition-all duration-700 ease-out scale-105 opacity-0 group-hover/card:opacity-100 group-hover/card:scale-100"
                                     imageClassName="object-cover"
                                 />
                             )}
