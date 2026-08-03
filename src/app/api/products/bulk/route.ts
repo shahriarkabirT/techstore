@@ -56,3 +56,44 @@ export async function DELETE(req: NextRequest) {
         );
     }
 }
+
+export async function PATCH(req: NextRequest) {
+    try {
+        await dbConnect();
+
+        const body = await req.json();
+        const { ids, updateData } = body;
+
+        if (!ids || !Array.isArray(ids) || ids.length === 0) {
+            return NextResponse.json(
+                { success: false, message: 'Invalid or empty IDs provided' },
+                { status: 400 }
+            );
+        }
+
+        const result = await Product.updateMany(
+            { _id: { $in: ids } },
+            { $set: updateData }
+        );
+
+        if (result.matchedCount === 0) {
+            return NextResponse.json(
+                { success: false, message: 'No products found to update' },
+                { status: 404 }
+            );
+        }
+
+        revalidatePath('/');
+
+        return NextResponse.json({
+            success: true,
+            message: `Successfully updated ${result.modifiedCount} products`,
+        });
+    } catch (error: any) {
+        console.error('Error updating products:', error);
+        return NextResponse.json(
+            { success: false, message: error.message || 'Internal Server Error' },
+            { status: 500 }
+        );
+    }
+}

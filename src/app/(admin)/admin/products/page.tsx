@@ -11,7 +11,8 @@ import {
     useGetProductsQuery,
     useDeleteProductMutation,
     useUpdateProductMutation,
-    useBulkDeleteProductsMutation
+    useBulkDeleteProductsMutation,
+    useBulkUpdateProductsMutation
 } from '@/redux/features/product/productApi';
 import {
     useGetCategoriesQuery,
@@ -135,6 +136,7 @@ function AdminProductsPageInner() {
 
     const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
     const [bulkDeleteProducts, { isLoading: isBulkDeleting }] = useBulkDeleteProductsMutation();
+    const [bulkUpdateProducts, { isLoading: isBulkUpdating }] = useBulkUpdateProductsMutation();
     const [updateProduct] = useUpdateProductMutation();
 
     const products = response?.products || [];
@@ -165,7 +167,6 @@ function AdminProductsPageInner() {
             if (deleteAction === 'single' && productToDelete) {
                 await deleteProduct(productToDelete).unwrap();
                 toast.success('Product deleted successfully');
-                // Remove from selection if deleted
                 if (selectedIds.includes(productToDelete)) {
                     setSelectedIds(prev => prev.filter(id => id !== productToDelete));
                 }
@@ -179,6 +180,18 @@ function AdminProductsPageInner() {
         } catch (error: any) {
             console.error('Error deleting product(s):', error);
             toast.error(error.data?.message || 'Failed to delete product(s)');
+        }
+    };
+
+    const handleBulkStatusChange = async (isActive: boolean) => {
+        if (selectedIds.length === 0) return;
+        try {
+            await bulkUpdateProducts({ ids: selectedIds, updateData: { isActive } }).unwrap();
+            toast.success(`Products successfully ${isActive ? 'published' : 'moved to drafts'}`);
+            setSelectedIds([]);
+        } catch (error: any) {
+            console.error('Error updating products:', error);
+            toast.error(error.data?.message || 'Failed to update products');
         }
     };
 
@@ -228,12 +241,28 @@ function AdminProductsPageInner() {
                 </div>
                 <div className="flex items-center gap-3">
                     {selectedIds.length > 0 && (
-                        <button
-                            onClick={handleBulkDeleteClick}
-                            className="btn bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
-                        >
-                            Delete Selected ({selectedIds.length})
-                        </button>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => handleBulkStatusChange(true)}
+                                disabled={isBulkUpdating}
+                                className="btn bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50"
+                            >
+                                Publish ({selectedIds.length})
+                            </button>
+                            <button
+                                onClick={() => handleBulkStatusChange(false)}
+                                disabled={isBulkUpdating}
+                                className="btn bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50"
+                            >
+                                Draft ({selectedIds.length})
+                            </button>
+                            <button
+                                onClick={handleBulkDeleteClick}
+                                className="btn bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
+                            >
+                                Delete ({selectedIds.length})
+                            </button>
+                        </div>
                     )}
 
                     <select

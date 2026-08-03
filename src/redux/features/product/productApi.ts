@@ -66,6 +66,14 @@ export const productApi = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['Product'],
         }),
+        bulkUpdateProducts: builder.mutation<{ success: boolean; message?: string }, { ids: string[]; updateData: any }>({
+            query: (body) => ({
+                url: '/products/bulk',
+                method: 'PATCH',
+                body,
+            }),
+            invalidatesTags: ['Product'],
+        }),
         getRelatedProducts: builder.query<ProductsResponse, {
             productId: string;
             category: string;
@@ -93,5 +101,6 @@ export const {
     useCreateProductMutation,
     useGetSearchSuggestionsQuery,
     useBulkDeleteProductsMutation,
+    useBulkUpdateProductsMutation,
     useGetRelatedProductsQuery,
 } = productApi;
