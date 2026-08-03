@@ -92,6 +92,7 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
                 { href: '/admin/settings/notifications', label: 'Notification Settings' },
                 { href: '/admin/settings/integrations', label: 'Integrations (Fraud BD)' },
                 { href: '/admin/couriers', label: 'Courier Settings'},
+                { href: '/admin/settings/api', label: 'API Settings' },
             ]
         },
         {

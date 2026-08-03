@@ -129,6 +129,10 @@ const SettingsSchema = new Schema<ISettingsDocument>(
             type: Number,
             default: 120,
         },
+        apiSecret: {
+            type: String,
+            trim: true,
+        },
     },
     {
         timestamps: true,

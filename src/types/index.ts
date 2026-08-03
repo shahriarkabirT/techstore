@@ -451,6 +451,9 @@ export interface ISettings {
     // Integrations
     fraudBdApiKey?: string;
     
+    // API
+    apiSecret?: string;
+    
     createdAt: Date;
     updatedAt: Date;
 }
