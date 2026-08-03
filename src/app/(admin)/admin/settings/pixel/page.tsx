@@ -102,7 +102,6 @@ function MarketingForm({ initialData }: { initialData: any }) {
                 </div> 
 
                 {/* GTM Card */}
-                {/* 
                 <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
                     <div className="flex items-center gap-3 border-b border-gray-100 pb-4 mb-6">
                         <div className="p-2 bg-green-50 rounded-lg text-green-600">
@@ -129,7 +128,6 @@ function MarketingForm({ initialData }: { initialData: any }) {
                         </div>
                     </div>
                 </div>
-                */}
 
                 {/* TikTok Pixel Card */}
                 {/* 

@@ -130,26 +130,6 @@ export const trackViewContent = (params: ViewContentParams) => {
       }
     });
 
-    // Ensure fbq queue exists before calling it
-    const win = window as any;
-    if (typeof win.fbq !== 'function') {
-      win.fbq = function() {
-        win.fbq.callMethod ? win.fbq.callMethod.apply(win.fbq, arguments) : win.fbq.queue.push(arguments);
-      };
-      if (!win._fbq) win._fbq = win.fbq;
-      win.fbq.push = win.fbq;
-      win.fbq.loaded = !0;
-      win.fbq.version = '2.0';
-      win.fbq.queue = [];
-    }
-
-    win.fbq('track', 'ViewContent', {
-      content_ids: params.content_ids,
-      content_type: params.content_type || 'product',
-      content_name: params.content_name,
-      value: normalizePurchaseValue(params.value),
-      currency: normalizeCurrency(params.currency)
-    });
   }
 };
 
@@ -171,24 +151,6 @@ export const trackAddToCart = (params: AddToCartParams) => {
       }
     });
 
-    const win = window as any;
-    if (typeof win.fbq !== 'function') {
-      win.fbq = function() {
-        win.fbq.callMethod ? win.fbq.callMethod.apply(win.fbq, arguments) : win.fbq.queue.push(arguments);
-      };
-      if (!win._fbq) win._fbq = win.fbq;
-      win.fbq.push = win.fbq;
-      win.fbq.loaded = !0;
-      win.fbq.version = '2.0';
-      win.fbq.queue = [];
-    }
-
-    win.fbq('track', 'AddToCart', {
-      content_ids: params.content_ids,
-      content_type: params.content_type || 'product',
-      value: normalizePurchaseValue(params.value),
-      currency: normalizeCurrency(params.currency)
-    });
   }
 };
 
@@ -211,25 +173,6 @@ export const trackInitiateCheckout = (params: InitiateCheckoutParams, userData?:
       }
     });
 
-    const win = window as any;
-    if (typeof win.fbq !== 'function') {
-      win.fbq = function() {
-        win.fbq.callMethod ? win.fbq.callMethod.apply(win.fbq, arguments) : win.fbq.queue.push(arguments);
-      };
-      if (!win._fbq) win._fbq = win.fbq;
-      win.fbq.push = win.fbq;
-      win.fbq.loaded = !0;
-      win.fbq.version = '2.0';
-      win.fbq.queue = [];
-    }
-
-    win.fbq('track', 'InitiateCheckout', {
-      content_ids: params.content_ids,
-      content_type: params.content_type || 'product',
-      num_items: params.num_items || params.contents.reduce((sum, c) => sum + c.quantity, 0),
-      value: normalizePurchaseValue(params.value),
-      currency: normalizeCurrency(params.currency)
-    });
   }
 };
 
@@ -264,32 +207,6 @@ export const trackPurchase = (params: PurchaseParams, userData?: UserData) => {
       }
     });
 
-    const win = window as any;
-    if (typeof win.fbq !== 'function') {
-      win.fbq = function() {
-        win.fbq.callMethod ? win.fbq.callMethod.apply(win.fbq, arguments) : win.fbq.queue.push(arguments);
-      };
-      if (!win._fbq) win._fbq = win.fbq;
-      win.fbq.push = win.fbq;
-      win.fbq.loaded = !0;
-      win.fbq.version = '2.0';
-      win.fbq.queue = [];
-    }
-
-    const fbqPayload = {
-      content_ids: params.content_ids,
-      content_type: params.content_type || 'product',
-      value: normalizePurchaseValue(params.value),
-      currency: normalizeCurrency(params.currency),
-      num_items: params.num_items || params.contents.reduce((sum, c) => sum + c.quantity, 0)
-    };
-    
-    // If we have an eventID, pass it in the third argument as per Meta standard
-    if (params.eventID) {
-      win.fbq('track', 'Purchase', fbqPayload, { eventID: params.eventID });
-    } else {
-      win.fbq('track', 'Purchase', fbqPayload);
-    }
   }
 };
 
