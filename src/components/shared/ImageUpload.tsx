@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState, ChangeEvent } from "react";
-import { Loader2 } from "lucide-react";
+import { useRef, useState, ChangeEvent, useEffect } from "react";
+import { Loader2, Maximize2 } from "lucide-react";
+import WatermarkedImage from "@/components/ui/WatermarkedImage";
 
 interface ImageUploadProps {
     images: string[];
@@ -31,7 +32,18 @@ export default function ImageUpload({
 }: ImageUploadProps) {
     const [uploading, setUploading] = useState(false);
     const [localError, setLocalError] = useState<string | null>(null);
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setPreviewImage(null);
+        };
+        if (previewImage) {
+            window.addEventListener('keydown', handleEscape);
+        }
+        return () => window.removeEventListener('keydown', handleEscape);
+    }, [previewImage]);
 
     const handleFileSelect = async (e: ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);
@@ -87,6 +99,7 @@ export default function ImageUpload({
     };
 
     return (
+        <>
         <div className="space-y-4">
             {localError && (
                 <div className="bg-white border border-rose-600 text-rose-600 text-[10px] px-3 py-2 rounded-lg font-bold flex items-center justify-between">
@@ -109,14 +122,19 @@ export default function ImageUpload({
                     const ratioClass = aspectRatio.replace(':', '/');
                     return (
                         <div key={index} className={`relative group rounded-lg overflow-hidden border border-gray-200 bg-white shadow-sm`} style={{ aspectRatio: ratioClass }}>
-                            <Image
-                                src={img}
-                                fill
-                                alt={`Upload ${index + 1}`}
-                                className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                                sizes="(max-width: 768px) 100vw, 50vw"
-                                draggable={false}
-                            />
+                            <div className="absolute inset-0 cursor-pointer" onClick={() => setPreviewImage(img)}>
+                                <Image
+                                    src={img}
+                                    fill
+                                    alt={`Upload ${index + 1}`}
+                                    className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                                    sizes="(max-width: 768px) 100vw, 50vw"
+                                    draggable={false}
+                                />
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                                    <Maximize2 className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" />
+                                </div>
+                            </div>
                             <button
                                 type="button"
                                 onClick={() => removeImage(index)}
@@ -164,5 +182,36 @@ export default function ImageUpload({
 
 
         </div>
+
+            {/* Fullscreen Preview Lightbox */}
+            {previewImage && (
+                <div 
+                    className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm"
+                    onClick={() => setPreviewImage(null)}
+                >
+                    <button 
+                        className="absolute top-6 right-6 text-white/50 hover:text-white p-2 transition-colors z-50 cursor-pointer"
+                        onClick={(e) => { e.stopPropagation(); setPreviewImage(null); }}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-8 h-8">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                    
+                    <div 
+                        className="relative w-full max-w-4xl h-[80vh] rounded-lg overflow-hidden flex items-center justify-center"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* We use WatermarkedImage here so they can preview the watermark and download it! */}
+                        <WatermarkedImage 
+                            src={previewImage} 
+                            alt="Preview High Quality" 
+                            className="w-full h-full"
+                            imageClassName="object-contain" 
+                        />
+                    </div>
+                </div>
+            )}
+        </>
     );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import WatermarkedImage from '@/components/ui/WatermarkedImage';
 import { useState, useCallback, useRef } from 'react';
 import ProductImageZoom from '@/components/client/ProductImageZoom';
 
@@ -142,7 +143,7 @@ export default function ProductImageGallery({
                                 {Math.abs(i - currentIndex) <= 1 ? (
                                     <ProductImageZoom src={img} alt={`${title} ${i + 1}`} />
                                 ) : (
-                                    <Image src={img} alt={`${title} ${i + 1}`} fill className="object-cover" draggable={false} />
+                                    <WatermarkedImage src={img} alt={`${title} ${i + 1}`} className="absolute inset-0 w-full h-full" imageClassName="object-cover" />
                                 )}
                             </div>
                         ))}
@@ -228,7 +229,7 @@ export default function ProductImageGallery({
                                 onClick={() => handleSelect(i)}
                                 className={`relative w-16 h-16 flex-shrink-0 border-2 rounded overflow-hidden transition-all ${currentIndex === i ? 'border-orange-500' : 'border-gray-200 opacity-60 hover:opacity-100'}`}
                             >
-                                <Image src={img} alt={`${title} ${i + 1}`} fill className="object-cover" draggable={false} />
+                                <WatermarkedImage src={img} alt={`${title} ${i + 1}`} className="absolute inset-0 w-full h-full" imageClassName="object-cover" />
                             </button>
                         ))}
                     </div>
@@ -253,7 +254,7 @@ export default function ProductImageGallery({
                         className="relative w-full max-w-2xl aspect-square rounded overflow-hidden"
                         onClick={e => e.stopPropagation()}
                     >
-                        <Image src={mainImage} alt={title} fill className="object-contain" draggable={false} />
+                        <WatermarkedImage src={mainImage} alt={title} className="absolute inset-0 w-full h-full" imageClassName="object-contain" />
                     </div>
                     {galleryImages.length > 1 && (
                         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
@@ -263,7 +264,7 @@ export default function ProductImageGallery({
                                     onClick={e => { e.stopPropagation(); handleSelect(i); }}
                                     className={`w-12 h-12 rounded border-2 overflow-hidden relative transition-all ${currentIndex === i ? 'border-white' : 'border-white/30 opacity-50 hover:opacity-100'}`}
                                 >
-                                    <Image src={img} alt="" fill className="object-cover" draggable={false} />
+                                    <WatermarkedImage src={img} alt="" className="absolute inset-0 w-full h-full" imageClassName="object-cover" />
                                 </button>
                             ))}
                         </div>

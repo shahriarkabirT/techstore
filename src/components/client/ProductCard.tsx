@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import WatermarkedImage from '@/components/ui/WatermarkedImage';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { MouseEvent, useState } from 'react';
@@ -72,20 +73,18 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
                     <Link href={`/products/${product.slug}`} className="block relative w-48 sm:w-64 flex-shrink-0 bg-gray-50 overflow-hidden">
                         {product.images?.[0] ? (
                             <>
-                                <Image
+                                <WatermarkedImage
                                     src={product.images[0]}
                                     alt={product.title}
-                                    fill
-                                    className={`object-cover transition-all duration-700 group-hover:scale-110 ${product.images[1] ? 'group-hover:opacity-0' : ''}`}
-                                    sizes="300px"
+                                    className={`absolute inset-0 transition-all duration-700 group-hover:scale-110 ${product.images[1] ? 'group-hover:opacity-0' : ''}`}
+                                    imageClassName="object-cover"
                                 />
                                 {product.images[1] && (
-                                    <Image
+                                    <WatermarkedImage
                                         src={product.images[1]}
                                         alt={product.title}
-                                        fill
-                                        className="object-cover transition-all duration-700 scale-110 opacity-0 group-hover:opacity-100 group-hover:scale-100"
-                                        sizes="300px"
+                                        className="absolute inset-0 transition-all duration-700 scale-110 opacity-0 group-hover:opacity-100 group-hover:scale-100"
+                                        imageClassName="object-cover"
                                     />
                                 )}
                             </>
@@ -223,20 +222,18 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
                 <Link href={`/products/${product.slug}`} className="block h-full w-full relative">
                     {product.images?.[0] ? (
                         <>
-                            <Image
+                            <WatermarkedImage
                                 src={product.images[0]}
                                 alt={product.title}
-                                fill
-                                className={`object-cover transition-transform duration-700 ease-out group-hover/card:scale-105 ${product.images[1] ? 'group-hover/card:opacity-0' : ''}`}
-                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 20vw"
+                                className={`absolute inset-0 transition-transform duration-700 ease-out group-hover/card:scale-105 ${product.images[1] ? 'group-hover/card:opacity-0' : ''}`}
+                                imageClassName="object-cover"
                             />
                             {product.images[1] && (
-                                <Image
+                                <WatermarkedImage
                                     src={product.images[1]}
                                     alt={product.title}
-                                    fill
-                                    className="object-cover transition-all duration-700 ease-out scale-105 opacity-0 group-hover/card:opacity-100 group-hover/card:scale-100"
-                                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 20vw"
+                                    className="absolute inset-0 transition-all duration-700 ease-out scale-105 opacity-0 group-hover/card:opacity-100 group-hover/card:scale-100"
+                                    imageClassName="object-cover"
                                 />
                             )}
                         </>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, MouseEvent, useEffect } from 'react';
-import Image from 'next/image';
+import WatermarkedImage from '@/components/ui/WatermarkedImage';
 
 interface ProductImageZoomProps {
     src: string;
@@ -46,18 +46,15 @@ export default function ProductImageZoom({ src, alt, onClick }: ProductImageZoom
             onMouseMove={handleMouseMove}
             onClick={onClick}
         >
-            <Image
+            <WatermarkedImage
                 src={src}
                 alt={alt}
-                fill
-                className="object-cover transition-transform duration-200 ease-out"
+                className="absolute inset-0 w-full h-full transition-transform duration-200 ease-out"
+                imageClassName="object-cover"
                 style={{
                     transformOrigin: `${cursorPos.x}% ${cursorPos.y}%`,
                     transform: isHovered && isDesktop ? `scale(${zoomLevel})` : 'scale(1)',
                 }}
-                sizes="(max-width: 1024px) 100vw, 40vw"
-                priority
-                draggable={false}
             />
 
             {/* Zoom Controls */}
