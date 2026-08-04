@@ -50,7 +50,7 @@ export default function WatermarkedImage({
       ctx.drawImage(img, 0, 0);
 
       // Configure watermark styles
-      ctx.fillStyle = "rgba(128, 128, 128, 0.15)"; // Very faint gray
+      ctx.fillStyle = "rgba(128, 128, 128, 0.25)"; // Faint gray
       const fontSize = Math.max(24, Math.floor(canvas.width / 12));
       ctx.font = `bold ${fontSize}px sans-serif`;
       ctx.textAlign = "center";
@@ -62,7 +62,7 @@ export default function WatermarkedImage({
       ctx.fillText(watermarkText, 0, 0);
       
       // Optional: Add a very faint white stroke so it's visible on both dark and light backgrounds
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
       ctx.lineWidth = Math.max(1, fontSize / 20);
       ctx.strokeText(watermarkText, 0, 0);
 
@@ -101,16 +101,7 @@ export default function WatermarkedImage({
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       />
       
-      {/* Visual CSS overlay for the website (matches the downloaded look) */}
-      <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
-        <div 
-          className="text-gray-500/15 font-bold select-none whitespace-nowrap transform -rotate-45"
-          style={{ fontSize: 'clamp(1.5rem, 8vw, 4rem)', WebkitTextStroke: '1px rgba(255,255,255,0.1)' }}
-        >
-          {watermarkText}
-        </div>
-      </div>
-
+      {/* Visual CSS overlay removed as per user request */}
       {/* Download button overlay */}
       <button
         onClick={handleDownload}
