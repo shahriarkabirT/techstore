@@ -105,6 +105,7 @@ export default function WatermarkedImage({
         they are interacting with this invisible layer, which forces Chrome to save the watermarked image instead.
       */}
       {watermarkedSrc && (
+        // eslint-disable-next-line @next/next/no-img-element -- src is a canvas data: URL; next/image does not support data: URLs, and this element is an invisible right-click trap that requires no image optimization.
         <img 
           src={watermarkedSrc} 
           alt={alt}

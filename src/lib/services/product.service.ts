@@ -16,11 +16,6 @@ export async function getProductsList(params: {
     sortBy?: string;
     sortOrder?: 1 | -1;
     featured?: string | null;
-    size?: string | null;
-    color?: string | null;
-    material?: string | null;
-    ram?: string | null;
-    storage?: string | null;
     minPrice?: string | null;
     maxPrice?: string | null;
     brand?: string | null;
@@ -37,11 +32,6 @@ export async function getProductsList(params: {
         sortBy = 'createdAt',
         sortOrder = -1,
         featured,
-        size,
-        color,
-        material,
-        ram,
-        storage,
         minPrice,
         maxPrice,
         brand
@@ -121,23 +111,52 @@ export async function getProductsList(params: {
     }
 
     if (search) {
-        query.$or = [
-            { title: { $regex: search, $options: 'i' } },
-            { 'variants.size': { $regex: search, $options: 'i' } },
-            { 'variants.colorName': { $regex: search, $options: 'i' } },
-            { 'variants.material': { $regex: search, $options: 'i' } },
-            { 'variants.ram': { $regex: search, $options: 'i' } },
-            { 'variants.storage': { $regex: search, $options: 'i' } },
-            { sku: { $regex: search, $options: 'i' } },
-            { 'variants.sku': { $regex: search, $options: 'i' } },
-        ];
+        const terms = search.trim().split(/\s+/);
+
+        // Build a fuzzy regex for each word: each character can be surrounded by optional chars
+        // e.g. "iphon" → matches "iphone", "iphoone", etc.
+        const fuzzyPattern = (word: string) => {
+            // Allow 0-1 extra/wrong characters using lookahead-free simple approach:
+            // Match the word with each character optionally substituted/skipped
+            // We use a simple "allow one char difference" approach via alternation
+            const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            // Strategy: search for the word OR any version missing/swapping one character
+            const variations: string[] = [escaped];
+            for (let i = 0; i < word.length; i++) {
+                // Delete one character
+                variations.push(escaped.slice(0, i) + escaped.slice(i + 1));
+                // Replace one character with any char
+                variations.push(escaped.slice(0, i) + '.' + escaped.slice(i + 1));
+            }
+            // Insert a wildcard at any position (transposition/insertion)
+            for (let i = 0; i <= word.length; i++) {
+                variations.push(escaped.slice(0, i) + '.?' + escaped.slice(i));
+            }
+            return variations.filter(Boolean).join('|');
+        };
+
+        // Each word must match at least one field (AND between words, OR across fields)
+        const termConditions = terms.map(term => {
+            const pattern = fuzzyPattern(term);
+            const re = { $regex: pattern, $options: 'i' };
+            return {
+                $or: [
+                    { title: re },
+                    { shortDescription: re },
+                    { tags: re },
+                    { compatibleModels: re },
+                    { sku: re },
+                    { 'seoMetadata.keywords': re },
+                    // attributes is a Map — search both keys and values via $elemMatch on the map entries
+                    { 'variants.attributes': re },
+                    { 'variants.sku': re },
+                ],
+            };
+        });
+
+        query.$and = [...(query.$and as any[] || []), ...termConditions];
     }
 
-    if (size) query['variants.size'] = size;
-    if (color) query['variants.colorName'] = color;
-    if (material) query['variants.material'] = material;
-    if (ram) query['variants.ram'] = ram;
-    if (storage) query['variants.storage'] = storage;
     if (brand) query.brand = brand;
 
     if (minPrice || maxPrice) {
