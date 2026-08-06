@@ -52,10 +52,10 @@ export async function generateMetadata(): Promise<Metadata> {
         },
         title: {
             template: `%s | ${brandName}`,
-            default: `${brandName} - Girls Phone Covers Bangladesh | Cute Cases for iPhone, Samsung | BDGirls`,
+            default: `${brandName} - Best Gadgets & Tech Accessories in Bangladesh | Phone Cases, Smart Watches, Earbuds`,
         },
-        description: `${brandName}: Your trusted online shopping destination. Girls Phone Covers Bangladesh | Cute Cases for iPhone, Samsung | BDGirls`,
-        keywords: 'ecommerce, online shopping, products, store',
+        description: `${brandName}: Bangladesh's trusted online gadget store. Shop the best phone cases, smart watches, earbuds, chargers & tech accessories at the lowest prices.`,
+        keywords: 'gadgets Bangladesh, phone cases Bangladesh, tech accessories, smart watch Bangladesh, earbuds Bangladesh, iPhone case, Samsung case, online tech store BD, buy gadgets online',
         authors: [{ name: 'Collaborative Cloud', url: 'https://ccloudlab.com' }],
         creator: 'Collaborative Cloud',
         appleWebApp: {

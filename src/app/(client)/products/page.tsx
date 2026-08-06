@@ -15,7 +15,7 @@ export async function generateMetadata({ searchParams }: { searchParams: any }) 
     const brandName = settings?.brandName || settings?.siteName || 'BDGIRLS.XYZ';
     
     let title = `Explore Our Collection | ${brandName}`;
-    let description = `Bangladesh's Number One Girls Accessories Shop - ${brandName}.`;
+    let description = `Shop the best gadgets & tech accessories in Bangladesh — ${brandName}. iPhone cases, Samsung covers, smart watches, earbuds & more.`;
     
     if (params?.category) {
         try {

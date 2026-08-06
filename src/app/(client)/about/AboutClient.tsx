@@ -58,7 +58,7 @@ export default function AboutClient({ brandName = 'CCloudLab', logoUrl = '/image
           </h1>
 
           <p className="font-serif italic font-light text-black/40 text-[clamp(17px,2.5vw,22px)] mb-8 leading-relaxed">
-            Bangladesh&apos;s Number One Girls Accessories Shop
+          Bangladesh&apos;s Leading Gadget &amp; Tech Accessories Store
           </p>
 
           <Divider />
@@ -96,10 +96,10 @@ export default function AboutClient({ brandName = 'CCloudLab', logoUrl = '/image
               A Dream Woven Into Every Accessory
             </h2>
             <p className="text-[15px] leading-[1.85] text-black/60 mb-5">
-              {brandName} was founded with a dream — to bring trendy fashion, premium gadgets, and modern lifestyle accessories together in one place. Our goal is not only to sell products, but to create a brand that reflects confidence, beauty, and quality for the modern girl.
+              {brandName} was founded with a passion — to bring cutting-edge gadgets, premium tech accessories, and modern lifestyle essentials together in one place. Our goal is not only to sell products, but to build a brand that stands for quality, innovation, and trust for the modern individual.
             </p>
             <p className="text-[15px] leading-[1.85] text-black/60">
-              At {brandName}, every product is carefully selected and designed to match today&apos;s fashion trends while maintaining elegance and durability — because an accessory is not just an add-on. It is a reflection of your personality and lifestyle.
+              At {brandName}, every product is carefully curated to meet today&apos;s tech demands while maintaining the highest standards of durability and performance — because a great gadget is not just a tool. It is an extension of your digital lifestyle.
             </p>
           </div>
         </div>
@@ -169,7 +169,7 @@ export default function AboutClient({ brandName = 'CCloudLab', logoUrl = '/image
                 Quality That Speaks for Itself
               </h3>
               <p className="text-[15px] leading-[1.85] text-black/50">
-                To provide premium quality accessories and lifestyle products that combine elegance, durability, and modern trends — making every girl feel confident and stylish.
+                To provide premium quality gadgets and tech accessories that combine innovation, durability, and value — empowering every customer with the best tech at the best prices.
               </p>
             </div>
 
@@ -182,7 +182,7 @@ export default function AboutClient({ brandName = 'CCloudLab', logoUrl = '/image
                 A Global Name from Bangladesh
               </h3>
               <p className="text-[15px] leading-[1.85] text-white/50">
-                To make {brandName} a trusted international brand representing trendy, high-quality girls&apos; accessories and lifestyle excellence — carrying the pride of Bangladesh to the world.
+                To make {brandName} Bangladesh&apos;s most trusted gadget brand — known internationally for its curated selection of smart watches, phone cases, earbuds, and premium tech accessories.
               </p>
             </div>
           </div>
@@ -239,7 +239,7 @@ export default function AboutClient({ brandName = 'CCloudLab', logoUrl = '/image
       <footer className="bg-white border-t border-black/8 py-10 px-6 text-center">
         <p className="font-serif text-2xl font-light text-black tracking-widest mb-2">{brandName}</p>
         <p className="text-xs tracking-[0.15em] uppercase text-black/30">
-          Trendy Girls Accessories &amp; Lifestyle — Bangladesh
+          Premium Gadgets &amp; Tech Accessories — Bangladesh
         </p>
       </footer>
 
