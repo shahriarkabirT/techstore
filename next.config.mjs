@@ -25,6 +25,29 @@ const nextConfig = {
   // are served immediately without needing a server restart.
   // Next.js caches public/ file list in memory at startup;
   // this rewrite bypasses that cache entirely.
+  async redirects() {
+    const redirectsList = [];
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
+    if (baseUrl) {
+      const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+      
+      redirectsList.push({
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'www.(?<domain>.*)',
+          },
+        ],
+        destination: `${cleanBaseUrl}/:path*`,
+        permanent: true,
+      });
+    }
+
+    return redirectsList;
+  },
+
   async rewrites() {
     return {
       beforeFiles: [
