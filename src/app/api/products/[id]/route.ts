@@ -302,6 +302,10 @@ export async function PUT(request, { params }) {
             }
         }
 
+        if (product.productType === 'variant' && product.variants && product.variants.length > 0) {
+            product.stock = product.variants.reduce((acc: number, v: any) => acc + (Number(v.stock) || 0), 0);
+        }
+
         await product.save();
         await product.populate('category', 'name slug');
         await product.populate('brand', 'name slug logo');

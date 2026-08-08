@@ -253,7 +253,6 @@ function ProductForm({ product, id }: { product: any; id: string }) {
         const discountValue = Number(formData.discountValue) || 0;
         const tax = Number(formData.tax) || 0;
         const weight = Number(formData.weight) || 0;
-        const stock = Number(formData.stock) || 0;
         const productCost = Number(formData.productCost) || 0;
 
         setFormData(prev => ({
@@ -266,7 +265,6 @@ function ProductForm({ product, id }: { product: any; id: string }) {
                 discountValue: Number(discountValue.toFixed(2)),
                 tax,
                 weight,
-                stock,
                 productCost
             }))
         }));
@@ -276,9 +274,6 @@ function ProductForm({ product, id }: { product: any; id: string }) {
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         if (!validateForm()) return;
-
-        // Auto-calculate total stock from variants for submission
-        const totalVariantStock = (formData.variants || []).reduce((acc, curr: any) => acc + (Number(curr.stock) || 0), 0);
 
         try {
             const res = await updateProduct({
@@ -721,19 +716,14 @@ function ProductForm({ product, id }: { product: any; id: string }) {
                                     ) : (
                                         <div>
                                             <div className="flex items-center justify-between mb-2">
-                                                <label className="block text-[11px] font-semibold uppercase tracking-widest text-gray-900">Default Stock</label>
-                                                <button type="button" onClick={() => handleSyncToAllVariants('stock')} title="Sync to all variants" className="p-1 hover:bg-indigo-50 text-indigo-500 rounded transition-colors">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3 h-3">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                                                    </svg>
-                                                </button>
+                                                <label className="block text-[11px] font-semibold uppercase tracking-widest text-gray-900">Total Stock (Auto-calculated)</label>
                                             </div>
                                             <input
                                                 type="number"
                                                 name="stock"
-                                                value={formData.stock}
-                                                onChange={handleInputChange}
-                                                className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm font-medium text-gray-900 focus:border-gray-900 transition-all outline-none"
+                                                value={totalVariantStock}
+                                                disabled
+                                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium text-gray-500 cursor-not-allowed outline-none"
                                                 placeholder="0"
                                             />
                                         </div>

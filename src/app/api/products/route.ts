@@ -215,7 +215,9 @@ export async function POST(request: NextRequest) {
             discountType,
             discountValue: Number(discountValue) || 0,
             tax: Number(tax) || 0,
-            stock: Number(stock) || 0,
+            stock: productType === 'variant' && sanitizedVariants.length > 0 
+                ? sanitizedVariants.reduce((acc: number, v: any) => acc + (Number(v.stock) || 0), 0)
+                : (Number(stock) || 0),
             weight: weight !== undefined && weight !== null && weight !== '' ? Number(weight) : null,
             images: images || [],
             category,
