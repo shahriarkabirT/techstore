@@ -192,10 +192,10 @@ function GeneralSettingsForm({ initialData, onSave, saving }: GeneralSettingsFor
                                     placeholder={!isEditing ? "" : "e.g., 2"}
                                     min="0"
                                     max="100"
-                                    className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 outline-none focus:ring-1 focus:ring-gray-900 focus:border-gray-900 transition-all pl-8 disabled:bg-transparent disabled:border-transparent disabled:shadow-none disabled:text-gray-800 disabled:cursor-default disabled:font-medium disabled:px-6"
+                                    className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 outline-none focus:ring-1 focus:ring-gray-900 focus:border-gray-900 transition-all pr-8 disabled:bg-transparent disabled:border-transparent disabled:shadow-none disabled:text-gray-800 disabled:cursor-default disabled:font-medium disabled:px-0 disabled:pr-6"
                                     required
                                 />
-                                <span className={`absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold ${!isEditing ? 'text-gray-800 left-0' : 'text-gray-400'}`}>%</span>
+                                <span className={`absolute right-3 top-1/2 -translate-y-1/2 text-sm font-bold ${!isEditing ? 'text-gray-800 right-0' : 'text-gray-400'}`}>%</span>
                             </div>
                             <p className="text-xs text-gray-400 mt-1">Percentage of order total given to referrers.</p>
                         </div>

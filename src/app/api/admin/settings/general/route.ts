@@ -12,7 +12,7 @@ export async function GET() {
         }
 
         await dbConnect();
-        const settings = await Settings.findOne({}, 'brandName shippingChargeInsideDhaka shippingChargeOutsideDhaka') || await Settings.create({});
+        const settings = await Settings.findOne({}, 'brandName shippingChargeInsideDhaka shippingChargeOutsideDhaka affiliateCommissionRate') || await Settings.create({});
         return NextResponse.json({ success: true, settings });
     } catch (error) {
         return NextResponse.json({ success: false, message: 'Failed to fetch settings' }, { status: 500 });
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { brandName, shippingChargeInsideDhaka, shippingChargeOutsideDhaka } = body;
+        const { brandName, shippingChargeInsideDhaka, shippingChargeOutsideDhaka, affiliateCommissionRate } = body;
 
         await dbConnect();
         const settings = await Settings.findOneAndUpdate(
@@ -36,7 +36,8 @@ export async function POST(req: Request) {
                 $set: {
                     brandName,
                     shippingChargeInsideDhaka,
-                    shippingChargeOutsideDhaka
+                    shippingChargeOutsideDhaka,
+                    affiliateCommissionRate
                 }
             },
             { new: true, upsert: true }
