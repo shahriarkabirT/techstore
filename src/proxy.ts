@@ -182,16 +182,13 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
 
 export const config = {
     matcher: [
-        '/profile',
-        '/profile/:path*',
-        '/checkout',
-        '/checkout/:path*',
-        '/orders',
-        '/orders/:path*',
-        '/admin',
-        '/admin/:path*',
-        '/login',
-        '/register',
-        '/api/:path*'
+        /*
+         * Match all request paths except for the ones starting with:
+         * - _next/static (static files)
+         * - _next/image (image optimization files)
+         * - favicon.ico (favicon file)
+         * - public folders
+         */
+        '/((?!_next/static|_next/image|favicon.ico|uploads).*)',
     ],
 };
