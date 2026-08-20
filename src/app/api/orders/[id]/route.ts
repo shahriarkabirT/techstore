@@ -17,9 +17,9 @@ export async function GET(request, { params }) {
         // Find by _id or orderId
         let order;
         if (id.match(/^[0-9a-fA-F]{24}$/)) {
-            order = await Order.findById(id);
+            order = await Order.findById(id).populate('affiliateId', 'name email affiliateCode');
         } else {
-            order = await Order.findOne({ orderId: id });
+            order = await Order.findOne({ orderId: id }).populate('affiliateId', 'name email affiliateCode');
         }
 
         if (!order) {

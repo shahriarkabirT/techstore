@@ -870,6 +870,33 @@ export default function OrderDetailPage() {
                         </div>
                     </div>
 
+                    {order.affiliateId && (
+                        <div className="bg-white p-6 rounded-xl border border-purple-200 shadow-sm bg-purple-50/30">
+                            <h2 className="text-base font-semibold text-purple-900 mb-4 flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                                Affiliate Referral
+                            </h2>
+                            <div className="space-y-3">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-purple-600/70">Referred By</span>
+                                    <span className="font-medium text-purple-900">{order.affiliateId.name || 'Unknown User'}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-purple-600/70">Email</span>
+                                    <span className="font-medium text-purple-900">{order.affiliateId.email}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-purple-600/70">Affiliate Code</span>
+                                    <span className="font-mono text-purple-900 bg-purple-100 px-1.5 py-0.5 rounded text-xs">{order.affiliateId.affiliateCode}</span>
+                                </div>
+                                <div className="pt-3 border-t border-purple-100 flex justify-between text-sm">
+                                    <span className="text-purple-600/70">Commission Amount</span>
+                                    <span className="font-bold text-purple-900">৳{order.affiliateCommission?.toFixed(2)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {!order.paymentDetails?.trackingId && activeCouriers.length > 0 && order.orderStatus !== 'Returned' && order.paymentStatus !== 'Refunded' && (
                         <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                             <h2 className="text-base font-semibold text-gray-900 mb-4">Courier Service</h2>
