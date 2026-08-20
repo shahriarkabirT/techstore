@@ -216,6 +216,15 @@ const OrderSchema = new Schema<IOrderDocument>(
             trim: true,
             maxlength: 2000,
         },
+        affiliateId: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+        },
+        affiliateCommission: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
     },
     {
         timestamps: true,

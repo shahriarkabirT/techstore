@@ -21,7 +21,21 @@ const ratelimit = redis
     : null;
 
 export async function proxy(request: NextRequest): Promise<NextResponse> {
-    const { pathname } = request.nextUrl;
+    const { pathname, searchParams } = request.nextUrl;
+    
+    let baseResponse = NextResponse.next();
+    let isBaseResponseModified = false;
+
+    // Check for affiliate ref
+    const ref = searchParams.get('ref');
+    if (ref) {
+        baseResponse.cookies.set('affiliate_ref', ref, {
+            path: '/',
+            maxAge: 30 * 24 * 60 * 60, // 30 days
+            httpOnly: true,
+        });
+        isBaseResponseModified = true;
+    }
 
     // Rate limiting for API routes
     if (pathname.startsWith('/api')) {
@@ -163,7 +177,7 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
         return NextResponse.redirect(new URL(redirectPath, request.url));
     }
 
-    return NextResponse.next();
+    return isBaseResponseModified ? baseResponse : NextResponse.next();
 }
 
 export const config = {

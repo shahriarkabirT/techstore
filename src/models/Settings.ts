@@ -137,6 +137,12 @@ const SettingsSchema = new Schema<ISettingsDocument>(
             type: String,
             trim: true,
         },
+        affiliateCommissionRate: {
+            type: Number,
+            default: 0,
+            min: 0,
+            max: 100
+        },
     },
     {
         timestamps: true,

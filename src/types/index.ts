@@ -327,6 +327,8 @@ export interface IOrder {
     advancePaymentMethod?: string;
     advancePaymentRef?: string;
     adminNote?: string;
+    affiliateId?: Types.ObjectId | string;
+    affiliateCommission?: number;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -360,6 +362,23 @@ export interface IAdmin {
 export interface IAdminDocument extends Omit<IAdmin, '_id'>, Document {
     comparePassword(candidatePassword: string): Promise<boolean>;
 }
+
+// ==================== Affiliation Program Interfaces ====================
+
+export interface IAffiliateTransaction {
+    _id: string;
+    user: Types.ObjectId | string;
+    amount: number;
+    type: 'earning' | 'withdrawal';
+    orderId?: Types.ObjectId | string;
+    status: 'pending' | 'cleared' | 'cancelled' | 'paid';
+    paymentMethod?: string;
+    paymentDetails?: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface IAffiliateTransactionDocument extends Omit<IAffiliateTransaction, '_id'>, Document { }
 
 // ==================== User & Review Interfaces ====================
 
@@ -401,6 +420,9 @@ export interface IUser {
         quantity: number;
         variant?: Map<string, string>;
     }[];
+    affiliateCode?: string;
+    affiliateBalance?: number;
+    totalAffiliateEarnings?: number;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -454,6 +476,9 @@ export interface ISettings {
     
     // API
     apiSecret?: string;
+    
+    // Affiliation Program
+    affiliateCommissionRate?: number;
     
     createdAt: Date;
     updatedAt: Date;

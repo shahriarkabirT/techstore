@@ -139,6 +139,7 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
         // { href: '/admin/chat', label: 'Live Chat', icon: 'chat', permKey: 'chat' },
         { href: '/admin/reviews', label: 'Reviews', icon: 'reviews', permKey: 'reviews' },
         { href: '/admin/landing-pages', label: 'Landing Pages', icon: 'landing', permKey: 'landing-pages' },
+        { href: '/admin/affiliate', label: 'Affiliates', icon: 'marketing', permKey: 'marketing' },
         { href: '/admin/blogs', label: 'Blogs', icon: 'blog', permKey: 'blogs' },
         { href: '/admin/testimonials', label: 'Testimonial', icon: 'testimonials', permKey: 'testimonials' },
         { href: '/admin/policies', label: 'Consumer Policy', icon: 'content', permKey: 'policies' },

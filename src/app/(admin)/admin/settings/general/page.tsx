@@ -26,7 +26,8 @@ function GeneralSettingsForm({ initialData, onSave, saving }: GeneralSettingsFor
     const [formData, setFormData] = useState({
         brandName: initialData?.brandName || '',
         shippingChargeInsideDhaka: String(initialData?.shippingChargeInsideDhaka ?? 60),
-        shippingChargeOutsideDhaka: String(initialData?.shippingChargeOutsideDhaka ?? 120)
+        shippingChargeOutsideDhaka: String(initialData?.shippingChargeOutsideDhaka ?? 120),
+        affiliateCommissionRate: String(initialData?.affiliateCommissionRate ?? 0)
     });
     const [isEditing, setIsEditing] = useState(false);
 
@@ -34,7 +35,8 @@ function GeneralSettingsForm({ initialData, onSave, saving }: GeneralSettingsFor
         setFormData({
             brandName: initialData?.brandName || '',
             shippingChargeInsideDhaka: String(initialData?.shippingChargeInsideDhaka ?? 60),
-            shippingChargeOutsideDhaka: String(initialData?.shippingChargeOutsideDhaka ?? 120)
+            shippingChargeOutsideDhaka: String(initialData?.shippingChargeOutsideDhaka ?? 120),
+            affiliateCommissionRate: String(initialData?.affiliateCommissionRate ?? 0)
         });
         setIsEditing(false);
     };
@@ -60,7 +62,8 @@ function GeneralSettingsForm({ initialData, onSave, saving }: GeneralSettingsFor
             const payload = {
                 brandName: formData.brandName,
                 shippingChargeInsideDhaka: Number(formData.shippingChargeInsideDhaka) || 0,
-                shippingChargeOutsideDhaka: Number(formData.shippingChargeOutsideDhaka) || 0
+                shippingChargeOutsideDhaka: Number(formData.shippingChargeOutsideDhaka) || 0,
+                affiliateCommissionRate: Number(formData.affiliateCommissionRate) || 0
             };
             const data = await onSave(payload);
             if (data.success) {
@@ -162,6 +165,39 @@ function GeneralSettingsForm({ initialData, onSave, saving }: GeneralSettingsFor
                                 />
                                 <span className={`absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold ${!isEditing ? 'text-gray-800 left-0' : 'text-gray-400'}`}>৳</span>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Affiliation Program */}
+                <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6">
+                    <div className="flex items-center gap-3 border-b border-gray-100 pb-4">
+                        <div className="p-2 bg-purple-50 rounded-lg text-purple-600">
+                            <Store className="w-5 h-5" />
+                        </div>
+                        <h2 className="text-lg font-semibold text-gray-900">Affiliation Program</h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-1">
+                            <label className="block text-sm font-medium text-gray-700">Commission Rate (%)</label>
+                            <div className="relative">
+                                <input
+                                    type="number"
+                                    name="affiliateCommissionRate"
+                                    value={formData.affiliateCommissionRate}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    disabled={!isEditing}
+                                    placeholder={!isEditing ? "" : "e.g., 2"}
+                                    min="0"
+                                    max="100"
+                                    className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 outline-none focus:ring-1 focus:ring-gray-900 focus:border-gray-900 transition-all pl-8 disabled:bg-transparent disabled:border-transparent disabled:shadow-none disabled:text-gray-800 disabled:cursor-default disabled:font-medium disabled:px-6"
+                                    required
+                                />
+                                <span className={`absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold ${!isEditing ? 'text-gray-800 left-0' : 'text-gray-400'}`}>%</span>
+                            </div>
+                            <p className="text-xs text-gray-400 mt-1">Percentage of order total given to referrers.</p>
                         </div>
                     </div>
                 </div>

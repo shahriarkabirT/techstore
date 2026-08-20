@@ -4,6 +4,8 @@ import Order from '@/models/Order';
 import Fraud from '@/models/Fraud';
 import { requirePermission, getUserFromToken } from '@/lib/auth';
 import Product from '@/models/Product';
+import AffiliateTransaction from '@/models/AffiliateTransaction';
+import User from '@/models/User';
 
 // GET single order
 export async function GET(request, { params }) {
@@ -141,6 +143,27 @@ export async function PUT(request, { params }) {
             }
 
             order.orderStatus = orderStatus;
+
+            // --- Affiliate Logic ---
+            if (order.affiliateId) {
+                if (orderStatus === 'Delivered') {
+                    const transaction = await AffiliateTransaction.findOne({ orderId: order._id, status: 'pending' });
+                    if (transaction) {
+                        transaction.status = 'cleared';
+                        await transaction.save();
+                        
+                        await User.findByIdAndUpdate(order.affiliateId, {
+                            $inc: { affiliateBalance: transaction.amount, totalAffiliateEarnings: transaction.amount }
+                        });
+                    }
+                } else if (orderStatus === 'Returned' || orderStatus === 'Cancelled') {
+                    await AffiliateTransaction.findOneAndUpdate(
+                        { orderId: order._id, status: 'pending' },
+                        { status: 'cancelled' }
+                    );
+                }
+            }
+            // -----------------------
 
             if (orderStatus === 'Blocked') {
                 // Automated Fraud Propagation

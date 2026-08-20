@@ -66,6 +66,7 @@ export default function Footer() {
         { label: 'Contact', href: '/contact' },
         { label: 'Track Order', href: '/track/order' },
         { label: 'Wishlist', href: '/wishlist' },
+        { label: 'Affiliation Program', href: '/affiliate' },
     ];
 
     const dynamicCategoryLinks = (categoriesData?.categories || []).slice(0, 6).map((category: any) => ({

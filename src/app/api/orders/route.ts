@@ -14,6 +14,8 @@ import Settings from '@/models/Settings';
 import { sendOrderConfirmationEmail } from '@/lib/email';
 import { sendCapiPurchase } from '@/lib/meta-capi';
 import { sendTelegramNotification } from '@/lib/telegram';
+import User from '@/models/User';
+import AffiliateTransaction from '@/models/AffiliateTransaction';
 
 // GET all orders (admin only)
 export async function GET(request: { url: string | URL; }) {
@@ -384,6 +386,33 @@ export async function POST(request: NextRequest) {
             source: landingPageId ? 'landing' : 'online',
             ipAddress,
         });
+
+        // --- Affiliate Logic ---
+        const affiliateRef = request.cookies.get('affiliate_ref')?.value;
+        if (affiliateRef) {
+            const referrer = await User.findOne({ affiliateCode: affiliateRef });
+            if (referrer && (!user || user.id !== referrer._id.toString())) {
+                const commissionRate = settings?.affiliateCommissionRate || 0;
+                if (commissionRate > 0) {
+                    const commissionAmount = (subtotal * commissionRate) / 100;
+                    
+                    // Attach to order
+                    order.affiliateId = referrer._id;
+                    order.affiliateCommission = commissionAmount;
+                    await order.save();
+
+                    // Create pending transaction
+                    await AffiliateTransaction.create({
+                        user: referrer._id,
+                        amount: commissionAmount,
+                        type: 'earning',
+                        orderId: order._id,
+                        status: 'pending'
+                    });
+                }
+            }
+        }
+        // -----------------------
 
         if (landingPageId) {
             await LandingPage.findByIdAndUpdate(landingPageId, { $inc: { orders: 1 } });

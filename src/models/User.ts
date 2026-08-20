@@ -131,6 +131,19 @@ const UserSchema = new Schema<IUserDocument>(
                 },
             },
         ],
+        affiliateCode: {
+            type: String,
+            unique: true,
+            sparse: true,
+        },
+        affiliateBalance: {
+            type: Number,
+            default: 0,
+        },
+        totalAffiliateEarnings: {
+            type: Number,
+            default: 0,
+        },
     },
     {
         timestamps: true,

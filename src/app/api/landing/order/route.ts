@@ -10,6 +10,8 @@ import { generateOrderId } from '@/lib/utils';
 import { getNextSequence } from '@/models/Counter';
 import { snapshotUnitProductCost } from '@/lib/orderUnitCost';
 import { sendCapiPurchase } from '@/lib/meta-capi';
+import User from '@/models/User';
+import AffiliateTransaction from '@/models/AffiliateTransaction';
 
 // POST — Create order from landing page (no auth required)
 export async function POST(request: NextRequest) {
@@ -206,6 +208,31 @@ export async function POST(request: NextRequest) {
             source: 'landing',
             ipAddress,
         });
+
+        // --- Affiliate Logic ---
+        const affiliateRef = request.cookies.get('affiliate_ref')?.value;
+        if (affiliateRef) {
+            const referrer = await User.findOne({ affiliateCode: affiliateRef });
+            if (referrer) {
+                const commissionRate = settings?.affiliateCommissionRate || 0;
+                if (commissionRate > 0) {
+                    const commissionAmount = (subtotal * commissionRate) / 100;
+                    
+                    order.affiliateId = referrer._id;
+                    order.affiliateCommission = commissionAmount;
+                    await order.save();
+
+                    await AffiliateTransaction.create({
+                        user: referrer._id,
+                        amount: commissionAmount,
+                        type: 'earning',
+                        orderId: order._id,
+                        status: 'pending'
+                    });
+                }
+            }
+        }
+        // -----------------------
 
         // Increment landing page orders counter
         if (landingPageId) {
