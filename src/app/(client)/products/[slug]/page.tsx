@@ -12,6 +12,7 @@ import CompatibleModelsSelector from '@/components/client/product-detail/Compati
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 
 async function getProductData(slug: string) {
     await dbConnect();
@@ -177,13 +178,15 @@ export default async function ProductPage({ params }: { params: any }) {
                         {/* Col 3: More Products Sidebar */}
                         <div className="lg:col-span-3 hidden lg:block lg:pl-6 xl:pl-10">
                             <div className="border border-gray-100 rounded-xl p-4 sticky top-6 lg:-mt-4 bg-white">
-                                <ProductMoreSidebar
-                                    currentProductId={product._id}
-                                    categoryId={categoryId}
-                                    subCategoryId={subCategoryId}
-                                    childCategoryId={childCategoryId}
-                                    subChildCategoryId={subChildCategoryId}
-                                />
+                                <Suspense fallback={<div className="flex justify-center items-center h-40"><div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div></div>}>
+                                    <ProductMoreSidebar
+                                        currentProductId={product._id}
+                                        categoryId={categoryId}
+                                        subCategoryId={subCategoryId}
+                                        childCategoryId={childCategoryId}
+                                        subChildCategoryId={subChildCategoryId}
+                                    />
+                                </Suspense>
                             </div>
                         </div>
                     </div>
@@ -195,14 +198,16 @@ export default async function ProductPage({ params }: { params: any }) {
 
                     {/* Related Products */}
                     <div className="mt-8">
-                        <RelatedProducts
-                            currentProductId={product._id}
-                            categoryId={categoryId}
-                            categoryName={product.category?.name || ''}
-                            subCategoryId={subCategoryId}
-                            childCategoryId={childCategoryId}
-                            subChildCategoryId={subChildCategoryId}
-                        />
+                        <Suspense fallback={<div className="flex justify-center items-center h-64"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>}>
+                            <RelatedProducts
+                                currentProductId={product._id}
+                                categoryId={categoryId}
+                                categoryName={product.category?.name || ''}
+                                subCategoryId={subCategoryId}
+                                childCategoryId={childCategoryId}
+                                subChildCategoryId={subChildCategoryId}
+                            />
+                        </Suspense>
                     </div>
                 </div>
             </div>
