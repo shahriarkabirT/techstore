@@ -1,6 +1,7 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import ProductCard from './ProductCard';
 import { useGetProductsQuery } from '@/redux/features/product/productApi';
 import { ProductCardSkeleton, ProductCardListSkeleton } from '../shared/Skeletons';
@@ -11,7 +12,6 @@ export default function ProductGrid({ initialData }: { initialData?: any }) {
 
     const category = searchParams.get('category') || undefined;
     const search = searchParams.get('q') || undefined;
-    const page = parseInt(searchParams.get('page') || '1');
     const sortByParam = searchParams.get('sortBy') || 'createdAt';
     const minPrice = searchParams.get('minPrice') || undefined;
     const maxPrice = searchParams.get('maxPrice') || undefined;
@@ -22,11 +22,25 @@ export default function ProductGrid({ initialData }: { initialData?: any }) {
     const sortOrder = order === 'asc' ? 'asc' : 'desc';
     const viewMode = searchParams.get('view') || 'grid';
 
+    // Infinite scrolling state
+    const [page, setPage] = useState(1);
+    const [accumulatedProducts, setAccumulatedProducts] = useState<any[]>([]);
+
+    // Reset pagination and list when filters change
+    const filterKey = `${category}-${search}-${sortByParam}-${minPrice}-${maxPrice}-${inStock}-${brand}`;
+    const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
+    
+    if (filterKey !== prevFilterKey) {
+        setPage(1);
+        setAccumulatedProducts([]);
+        setPrevFilterKey(filterKey);
+    }
+
     const { data: response, isLoading, isFetching } = useGetProductsQuery({
         category,
         search,
         page,
-        limit: 60,
+        limit: 20,
         sortBy: sortBy || 'createdAt',
         sortOrder,
         minPrice: minPrice ? parseInt(minPrice) : undefined,
@@ -35,24 +49,48 @@ export default function ProductGrid({ initialData }: { initialData?: any }) {
         brand,
     });
 
-    const products = response?.products || initialData?.products || [];
+    const [prevProducts, setPrevProducts] = useState<any[] | null>(null);
+
+    // Accumulate products as new pages are loaded during render (avoids cascading renders)
+    if (response?.products && response.products !== prevProducts) {
+        setPrevProducts(response.products);
+        setAccumulatedProducts((prev) => {
+            if (page === 1) return response.products;
+            // Avoid duplicates caused by React StrictMode or concurrent renders
+            const newProducts = response.products.filter(
+                (newProduct: any) => !prev.some((p) => p._id === newProduct._id)
+            );
+            return [...prev, ...newProducts];
+        });
+    }
+
+    // Use initialData on first render before client fetch completes
+    const products = (page === 1 && !response) ? (initialData?.products || []) : accumulatedProducts;
     const pagination = response?.pagination || initialData?.pagination || { total: 0, pages: 1, page: 1 };
     
-    // Only show loading skeleton if we don't have a response AND we don't have initial SSR data
-    const shouldShowSkeleton = isLoading && !initialData;
+    // Only show full-page skeleton if we don't have a response AND we don't have initial SSR data
+    const shouldShowSkeleton = isLoading && page === 1 && !initialData;
 
-    const handlePageChange = (newPage: number) => {
-        const params = new URLSearchParams(searchParams.toString());
-        params.set('page', newPage.toString());
-        router.push(`/products?${params.toString()}`);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
+    // Intersection Observer for the last element
+    const observer = useRef<IntersectionObserver | null>(null);
+    const lastProductRef = useCallback((node: HTMLDivElement | null) => {
+        if (isFetching || isLoading) return;
+        if (observer.current) observer.current.disconnect();
+
+        observer.current = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && page < pagination.pages) {
+                setPage((prevPage) => prevPage + 1);
+            }
+        });
+
+        if (node) observer.current.observe(node);
+    }, [isFetching, isLoading, page, pagination.pages]);
 
     if (shouldShowSkeleton) {
         return (
-            <div className="space-y-8 mt-4  ">
+            <div className="space-y-8 mt-4">
                 <div className={`grid gap-3 sm:gap-4 ${viewMode === 'grid' ? 'grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'}`}>
-                    {[...Array(16)].map((_, i) => (
+                    {[...Array(12)].map((_, i) => (
                         viewMode === 'grid' ? <ProductCardSkeleton key={i} /> : <ProductCardListSkeleton key={i} />
                     ))}
                 </div>
@@ -60,7 +98,7 @@ export default function ProductGrid({ initialData }: { initialData?: any }) {
         );
     }
 
-    if (products.length === 0) {
+    if (products.length === 0 && !isFetching) {
         return (
             <div className="space-y-8">
                 <div className="bg-white rounded-xl p-16 text-center border border-gray-100 shadow-sm">
@@ -74,7 +112,10 @@ export default function ProductGrid({ initialData }: { initialData?: any }) {
                         Try adjusting your filters or search terms to discover more of our collection.
                     </p>
                     <button
-                        onClick={() => router.push('/products')}
+                        onClick={() => {
+                            // Reset filters by navigating to base products URL
+                            router.push('/products');
+                        }}
                         className="inline-flex items-center justify-center px-8 py-3 bg-gray-900 text-white rounded-lg font-medium text-sm hover:bg-black transition-all shadow-sm active:scale-95"
                     >
                         Clear all filters
@@ -85,103 +126,31 @@ export default function ProductGrid({ initialData }: { initialData?: any }) {
     }
 
     return (
-        <div className={`space-y-8 ${isFetching ? 'opacity-50 transition-opacity' : ''}`}>
+        <div className="space-y-8 pb-12">
             <div className={`grid gap-3 sm:gap-4 ${viewMode === 'grid' ? 'grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'}`}>
-                {products.map((product) => (
-                    <ProductCard key={product._id} product={product} viewMode={viewMode as 'grid' | 'list'} />
-                ))}
+                {products.map((product: any, index: number) => {
+                    const isLastProduct = index === products.length - 1;
+                    return (
+                        <div key={product._id} ref={isLastProduct ? lastProductRef : null}>
+                            <ProductCard product={product} viewMode={viewMode as 'grid' | 'list'} />
+                        </div>
+                    );
+                })}
             </div>
 
-            {/* Compact Pagination */}
-            {pagination.pages > 1 && (() => {
-                const current = pagination.page;
-                const total = pagination.pages;
-
-                // Build smart page range: [1, ..., current-2..current+2, ..., last]
-                const pages: (number | 'dots')[] = [];
-                const addPage = (n: number) => { if (!pages.includes(n)) pages.push(n); };
-
-                addPage(1);
-                if (current > 4) pages.push('dots');
-                for (let i = Math.max(2, current - 2); i <= Math.min(total - 1, current + 2); i++) addPage(i);
-                if (current < total - 3) pages.push('dots');
-                if (total > 1) addPage(total);
-
-                return (
-                    <div className="mt-10 border-t border-gray-100 pt-6 flex flex-col items-center gap-3">
-                        {/* Info */}
-                        <span className="text-[11px] text-gray-400">
-                            {(current - 1) * 60 + 1}–{Math.min(current * 60, pagination.total)} of {pagination.total} products
-                        </span>
-
-                        {/* Prev + Numbers + Next */}
-                        <div className="flex items-center gap-1.5">
-                            {/* Prev */}
-                            <button
-                                disabled={current === 1}
-                                onClick={() => handlePageChange(current - 1)}
-                                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-500 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-30 disabled:hover:bg-white transition-all active:scale-95"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-                                </svg>
-                                <span className="hidden sm:inline">Prev</span>
-                            </button>
-
-                            {/* Page Numbers */}
-                            {pages.map((item, idx) =>
-                                item === 'dots' ? (
-                                    <span key={`dots-${idx}`} className="w-7 text-center text-gray-300 text-xs select-none">…</span>
-                                ) : (
-                                    <button
-                                        key={item}
-                                        onClick={() => handlePageChange(item)}
-                                        className={`w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-lg text-xs font-bold transition-all active:scale-90 ${
-                                            current === item
-                                                ? 'bg-gray-900 text-white shadow-md'
-                                                : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
-                                        }`}
-                                    >
-                                        {item}
-                                    </button>
-                                )
-                            )}
-
-                            {/* Next */}
-                            <button
-                                disabled={current === total}
-                                onClick={() => handlePageChange(current + 1)}
-                                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-500 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-30 disabled:hover:bg-white transition-all active:scale-95"
-                            >
-                                <span className="hidden sm:inline">Next</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                                </svg>
-                            </button>
-
-                            {/* Go to page */}
-                            <div className="hidden sm:flex items-center gap-1 ml-2 text-[11px] text-gray-400">
-                                <span>Go</span>
-                                <input
-                                    type="number"
-                                    min={1}
-                                    max={total}
-                                    placeholder={String(current)}
-                                    className="w-10 h-7 text-center text-xs font-bold border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            const val = Math.min(total, Math.max(1, parseInt((e.target as HTMLInputElement).value) || 1));
-                                            handlePageChange(val);
-                                            (e.target as HTMLInputElement).value = '';
-                                            (e.target as HTMLInputElement).blur();
-                                        }
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                );
-            })()}
+            {/* Loading Indicator at the bottom */}
+            {isFetching && page > 1 && (
+                <div className="flex justify-center py-6">
+                    <div className="w-8 h-8 rounded-full border-2 border-gray-200 border-t-gray-900 animate-spin"></div>
+                </div>
+            )}
+            
+            {/* End of list indicator */}
+            {!isFetching && page >= pagination.pages && products.length > 0 && (
+                <div className="flex justify-center py-8">
+                    <p className="text-sm text-gray-400">You&apos;ve reached the end of the collection.</p>
+                </div>
+            )}
         </div>
     );
 }

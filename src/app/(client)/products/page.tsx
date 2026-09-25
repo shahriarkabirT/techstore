@@ -64,7 +64,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: any
         category: params.category || null,
         search: params.q || null,
         page: parseInt(params.page || '1') || 1,
-        limit: 60,
+        limit: 20,
         sortBy: params.sortBy ? params.sortBy.split('_')[0] : 'createdAt',
         sortOrder: params.sortBy && params.sortBy.split('_')[1] === 'asc' ? 1 : -1 as 1 | -1,
         minPrice: params.minPrice || null,
@@ -108,10 +108,12 @@ export default async function ProductsPage({ searchParams }: { searchParams: any
             <div className="container mx-auto pt-6 pb-6 sm:pb-12">
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* Sidebar Filters - Desktop */}
-                    <aside className="hidden lg:block lg:w-72 flex-shrink-0 relative border-r border-gray-100/80 pr-6 mr-2">
-                        {/* Custom right-only shadow line */}
-                        <div className="absolute top-0 right-0 bottom-0 w-[1px] shadow-[4px_0_12px_rgba(0,0,0,0.03)] pointer-events-none" />
-                        <div className="sticky top-28">
+                    <aside className="hidden lg:block lg:w-72 flex-shrink-0 relative pr-6 mr-4 z-10">
+                        {/* Shadow Border */}
+                        <div className="absolute top-0 right-0 bottom-0 w-[1px] bg-gray-200 shadow-[4px_0_15px_rgba(0,0,0,0.1)] pointer-events-none" />
+                        
+                        {/* Scrollable Sticky Container */}
+                        <div className="sticky top-28 h-[calc(100vh-8rem)] overflow-y-auto pb-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                             <ProductFilters />
                         </div>
                     </aside>
