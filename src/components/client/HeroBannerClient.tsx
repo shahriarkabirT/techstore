@@ -157,11 +157,15 @@ export default function HeroBannerClient({ banners }: HeroBannerClientProps) {
     const hasSecondary = secondaryTopBanners.length > 0 || secondaryBottomBanners.length > 0;
 
     return (
-        <div className="container mx-auto px-4 mt-4 lg:mt-6 mb-2 md:mb-4 xl:px-0">
-            <div className="flex flex-col lg:flex-row gap-4 w-full">
+        <div className={hasSecondary ? "container mx-auto px-4 mt-4 lg:mt-6 mb-2 md:mb-4 xl:px-0" : "w-full mb-2 md:mb-4"}>
+            <div className={`flex flex-col lg:flex-row ${hasSecondary ? 'gap-4' : ''} w-full`}>
                 {/* Primary Banners Carousel */}
                 <div 
-                    className={`relative ${hasSecondary ? 'w-full lg:w-[65%] xl:w-[70%]' : 'w-full'} aspect-[16/7] md:aspect-[21/9] overflow-hidden rounded-xl bg-gray-900 shadow-md group select-none`}
+                    className={`relative ${
+                        hasSecondary 
+                            ? 'w-full lg:w-[65%] xl:w-[70%] aspect-[16/7] md:aspect-[21/9] rounded-xl' 
+                            : 'w-full aspect-[16/5] md:aspect-[28/9] rounded-none'
+                    } overflow-hidden bg-gray-900 shadow-md group select-none`}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => { setIsHovered(false); handleDragEnd(); }}
                 >
@@ -246,8 +250,7 @@ export default function HeroBannerClient({ banners }: HeroBannerClientProps) {
                         </div>
                     )}
 
-                    {/* Bottom Gradient Overlay to ensure indicator visibility */}
-                    <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-gray-900/90 to-transparent pointer-events-none z-10"></div>
+                    {/* Bottom Gradient Overlay removed per user request */}
 
                     {/* Indicators */}
                     {primaryBanners.length > 1 && (

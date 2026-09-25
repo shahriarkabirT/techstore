@@ -13,7 +13,7 @@ import {
   ShoppingBag,
   User,
   UserPlus,
-  MoreHorizontal,
+  MoreVertical,
   Info,
   HelpCircle,
   Phone,
@@ -432,7 +432,7 @@ export default function Navbar({ initialSettings }: NavbarProps) {
                   className="flex flex-col items-center gap-1 p-1.5 text-gray-600 hover:text-gray-900 transition-colors group cursor-pointer"
                 >
                   <div className="relative">
-                    <MoreHorizontal
+                    <MoreVertical
                       className="w-6 h-6 group-hover:text-gray-900 transition-colors"
                       strokeWidth={1.5}
                     />

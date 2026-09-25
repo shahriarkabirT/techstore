@@ -16,6 +16,9 @@ import TrustBar from '@/components/client/TrustBar';
 export default async function HomePage() {
     return (
         <div className="min-h-screen bg-background">
+            {/* Visually hidden H1 for SEO and screen readers */}
+            <h1 className="sr-only">Premium Mobile Accessories, Cases & Gadgets - Shop the Best Deals</h1>
+            
             {/* Dynamic Hero Section */}
             <HeroBanner />
 

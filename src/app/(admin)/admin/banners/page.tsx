@@ -112,6 +112,26 @@ export default function AdminBannersPage() {
                 )}
             </div>
 
+            {/* Banner Upload Instructions based on position */}
+            {position === 'primary' && (
+                <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl">
+                    <h4 className="text-sm font-bold text-blue-900 mb-1">Recommended Image Ratios</h4>
+                    <ul className="text-xs text-blue-800 space-y-1 list-disc list-inside">
+                        <li><strong>Single Layout (No Secondary Banners):</strong> The banner will stretch edge-to-edge. Use a <strong>28:9 ratio</strong> (e.g., 2800x900px).</li>
+                        <li><strong>Standard Layout (With Secondary Banners):</strong> The banner will sit next to side banners. Use a <strong>21:9 ratio</strong> (e.g., 2100x900px).</li>
+                    </ul>
+                </div>
+            )}
+            
+            {(position === 'secondary-top' || position === 'secondary-bottom' || position === 'secondary') && (
+                <div className="bg-purple-50 border border-purple-100 p-4 rounded-xl">
+                    <h4 className="text-sm font-bold text-purple-900 mb-1">Recommended Image Ratios</h4>
+                    <p className="text-xs text-purple-800">
+                        Secondary banners sit alongside the primary banner in a stacked column. Upload images with a roughly <strong>16:9 or 4:3 ratio</strong> (e.g., 800x600px).
+                    </p>
+                </div>
+            )}
+
             <BannerModal
                 key={isFormOpen ? (editingBanner?._id || 'new') : 'closed'}
                 isOpen={isFormOpen}
