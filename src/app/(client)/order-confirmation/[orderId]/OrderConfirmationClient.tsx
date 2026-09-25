@@ -16,7 +16,7 @@ export default function OrderConfirmationClient({ order, status }: OrderConfirma
   useEffect(() => {
     const storageKey = `meta_pixel_purchase_${order.orderId}`;
     try {
-      if (sessionStorage.getItem(storageKey)) return;
+      if (localStorage.getItem(storageKey)) return;
     } catch {
       return;
     }
@@ -36,7 +36,7 @@ export default function OrderConfirmationClient({ order, status }: OrderConfirma
 
     const dispose = runWhenFbqReady(() => {
       try {
-        if (sessionStorage.getItem(storageKey)) return;
+        if (localStorage.getItem(storageKey)) return;
       } catch {
         return;
       }
@@ -62,7 +62,7 @@ export default function OrderConfirmationClient({ order, status }: OrderConfirma
       );
 
       try {
-        sessionStorage.setItem(storageKey, "1");
+        localStorage.setItem(storageKey, "1");
       } catch {
         /* ignore quota / private mode */
       }
