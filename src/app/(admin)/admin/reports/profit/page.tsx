@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { AddExpenseModal } from '@/components/admin/expenses/AddExpenseModal';
 import toast from 'react-hot-toast';
 import {
     AreaChart,
@@ -30,6 +31,7 @@ export default function ProfitReportPage() {
     const [customStart, setCustomStart] = useState('');
     const [customEnd, setCustomEnd] = useState('');
     const [mounted, setMounted] = useState(false);
+    const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
 
     useEffect(() => {
         setMounted(true);
@@ -70,8 +72,9 @@ export default function ProfitReportPage() {
     const chartData = (data?.daily || []).map((item: any) => ({
         date: item.date,
         revenue: (item.revenueWithCost || 0) + (item.revenueWithoutCost || 0),
-        expenses: item.totalCogs || 0,
-        profit: item.grossProfit || 0,
+        cogs: item.totalCogs || 0,
+        opex: item.operationalExpenses || 0,
+        profit: item.netProfit !== undefined ? item.netProfit : (item.grossProfit || 0),
     }));
 
     const formatXAxis = (dateStr: string) => {
@@ -113,19 +116,28 @@ export default function ProfitReportPage() {
                         <div className="flex items-center justify-between gap-4">
                             <div className="flex items-center gap-2">
                                 <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
-                                <span className="text-xs font-semibold text-gray-500">Expenses</span>
+                                <span className="text-xs font-semibold text-gray-500">COGS</span>
                             </div>
                             <span className="text-xs font-black text-gray-900 tabular-nums">
-                                {formatCurrency(payload[1].value)}
+                                {formatCurrency(payload[1]?.value || 0)}
+                            </span>
+                        </div>
+                        <div className="flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-2">
+                                <span className="w-2.5 h-2.5 rounded-full bg-orange-500" />
+                                <span className="text-xs font-semibold text-gray-500">OPEX</span>
+                            </div>
+                            <span className="text-xs font-black text-gray-900 tabular-nums">
+                                {formatCurrency(payload[2]?.value || 0)}
                             </span>
                         </div>
                         <div className="flex items-center justify-between gap-4 border-t border-gray-50 pt-2 mt-1">
                             <div className="flex items-center gap-2">
                                 <span className="w-2.5 h-2.5 rounded-full bg-indigo-600" />
-                                <span className="text-xs font-bold text-gray-700">Profit</span>
+                                <span className="text-xs font-bold text-gray-700">Net Profit</span>
                             </div>
                             <span className="text-xs font-black text-indigo-600 tabular-nums">
-                                {formatCurrency(payload[2].value)}
+                                {formatCurrency(payload[3]?.value || 0)}
                             </span>
                         </div>
                     </div>
@@ -145,13 +157,25 @@ export default function ProfitReportPage() {
                 <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                     <h1 className="text-2xl font-black text-gray-900 tracking-tight shrink-0">Profit &amp; cost</h1>
                     <div className="flex flex-row flex-nowrap items-center gap-2 shrink-0 overflow-x-auto pb-0.5 -mx-1 px-1 sm:mx-0 sm:px-0 sm:overflow-visible">
+                        <button
+                            onClick={() => setIsExpenseModalOpen(true)}
+                            className="shrink-0 px-3 py-2 rounded-lg text-[10px] font-bold uppercase border whitespace-nowrap bg-rose-50 text-rose-600 border-rose-100 hover:bg-rose-100 transition-colors mr-1 cursor-pointer"
+                        >
+                            + Add Expense
+                        </button>
+                        <Link 
+                            href="/admin/expenses" 
+                            className="shrink-0 px-3 py-2 rounded-lg text-[10px] font-bold uppercase border whitespace-nowrap bg-gray-50 text-gray-600 border-gray-100 hover:bg-gray-100 transition-colors mr-1"
+                        >
+                            View All
+                        </Link>
                         {PRESETS.map((p) => (
                             <button
                                 key={p.days}
                                 type="button"
                                 onClick={() => setActiveDays(p.days)}
-                                className={`shrink-0 px-3 py-2 rounded-lg text-xs font-black uppercase border whitespace-nowrap ${
-                                    activeDays === p.days ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-600 border-gray-200'
+                                className={`shrink-0 px-3 py-2 rounded-lg text-[10px] font-bold uppercase border whitespace-nowrap transition-colors ${
+                                    activeDays === p.days ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                                 }`}
                             >
                                 {p.label}
@@ -198,24 +222,34 @@ export default function ProfitReportPage() {
                 <div className="py-20 text-center text-gray-500 text-sm font-medium">Loading…</div>
             ) : s ? (
                 <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                         <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
                             <p className="text-[10px] font-bold text-gray-500 uppercase">Gross profit</p>
                             <p className="text-2xl font-black text-emerald-700 mt-1 tabular-nums">{formatCurrency(s.grossProfit)}</p>
                         </div>
                         <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-                            <p className="text-[10px] font-bold text-gray-500 uppercase">COGS</p>
-                            <p className="text-2xl font-black text-gray-900 mt-1 tabular-nums">{formatCurrency(s.totalCogs)}</p>
+                            <p className="text-[10px] font-bold text-gray-500 uppercase">Operational Expenses</p>
+                            <p className="text-2xl font-black text-rose-600 mt-1 tabular-nums">{formatCurrency(s.operationalExpenses || 0)}</p>
                         </div>
-                        <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+                        <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm lg:col-span-2">
+                            <p className="text-[10px] font-bold text-indigo-500 uppercase">True Net Profit</p>
+                            <p className="text-3xl font-black text-indigo-700 mt-1 tabular-nums">{formatCurrency(s.netProfit || 0)}</p>
+                            <p className="text-[11px] text-gray-400 mt-1">Gross profit minus all operational expenses</p>
+                        </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                        <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                            <p className="text-[10px] font-bold text-gray-500 uppercase">COGS (Product Costs)</p>
+                            <p className="text-xl font-black text-gray-900 mt-1 tabular-nums">{formatCurrency(s.totalCogs)}</p>
+                        </div>
+                        <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
                             <p className="text-[10px] font-bold text-gray-500 uppercase">Revenue (with cost)</p>
                             <p className="text-xl font-black text-gray-900 mt-1 tabular-nums">{formatCurrency(s.revenueWithCost)}</p>
-                            <p className="text-[11px] text-gray-400 mt-1">{s.linesWithCost} line items</p>
                         </div>
-                        <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+                        <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
                             <p className="text-[10px] font-bold text-gray-500 uppercase">Revenue (no cost)</p>
                             <p className="text-xl font-black text-amber-700 mt-1 tabular-nums">{formatCurrency(s.revenueWithoutCost)}</p>
-                            <p className="text-[11px] text-gray-400 mt-1">{s.linesWithoutCost} line items — add unit cost on products to include</p>
                         </div>
                     </div>
 
@@ -239,11 +273,15 @@ export default function ProfitReportPage() {
                                     </div>
                                     <div className="flex items-center gap-1.5">
                                         <span className="w-2 h-2 rounded-full bg-rose-500" />
-                                        <span className="text-xs font-bold text-gray-500">Expenses</span>
+                                        <span className="text-xs font-bold text-gray-500">COGS</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="w-2 h-2 rounded-full bg-orange-500" />
+                                        <span className="text-xs font-bold text-gray-500">OPEX</span>
                                     </div>
                                     <div className="flex items-center gap-1.5">
                                         <span className="w-2 h-2 rounded-full bg-indigo-600" />
-                                        <span className="text-xs font-bold text-gray-500">Profit</span>
+                                        <span className="text-xs font-bold text-gray-500">Net Profit</span>
                                     </div>
                                 </div>
                             </div>
@@ -261,9 +299,13 @@ export default function ProfitReportPage() {
                                                 <stop offset="5%" stopColor="#10b981" stopOpacity={0.15}/>
                                                 <stop offset="95%" stopColor="#10b981" stopOpacity={0.0}/>
                                             </linearGradient>
-                                            <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
+                                            <linearGradient id="colorCogs" x1="0" y1="0" x2="0" y2="1">
                                                 <stop offset="5%" stopColor="#ef4444" stopOpacity={0.12}/>
                                                 <stop offset="95%" stopColor="#ef4444" stopOpacity={0.0}/>
+                                            </linearGradient>
+                                            <linearGradient id="colorOpex" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor="#f97316" stopOpacity={0.12}/>
+                                                <stop offset="95%" stopColor="#f97316" stopOpacity={0.0}/>
                                             </linearGradient>
                                             <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
                                                 <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.12}/>
@@ -301,13 +343,23 @@ export default function ProfitReportPage() {
                                         />
                                         <Area
                                             type="monotone"
-                                            dataKey="expenses"
+                                            dataKey="cogs"
                                             stroke="#ef4444"
                                             strokeWidth={2.5}
                                             fillOpacity={1}
-                                            fill="url(#colorExpenses)"
+                                            fill="url(#colorCogs)"
                                             dot={{ r: 4, strokeWidth: 1.5, fill: '#fff' }}
                                             activeDot={{ r: 6, strokeWidth: 2, fill: '#ef4444' }}
+                                        />
+                                        <Area
+                                            type="monotone"
+                                            dataKey="opex"
+                                            stroke="#f97316"
+                                            strokeWidth={2.5}
+                                            fillOpacity={1}
+                                            fill="url(#colorOpex)"
+                                            dot={{ r: 4, strokeWidth: 1.5, fill: '#fff' }}
+                                            activeDot={{ r: 6, strokeWidth: 2, fill: '#f97316' }}
                                         />
                                         <Area
                                             type="monotone"
@@ -378,6 +430,18 @@ export default function ProfitReportPage() {
                     </div>
                 </>
             ) : null}
+            <AddExpenseModal
+                isOpen={isExpenseModalOpen}
+                onClose={() => setIsExpenseModalOpen(false)}
+                onSuccess={() => fetchReport(
+                    activeDays !== -1 
+                        ? new Date(new Date().setDate(new Date().getDate() - activeDays)).toISOString().split('T')[0] 
+                        : customStart,
+                    activeDays !== -1 
+                        ? new Date().toISOString().split('T')[0] 
+                        : customEnd
+                )}
+            />
         </div>
     );
 }

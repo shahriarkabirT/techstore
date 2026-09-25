@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import ProductFilters from './ProductFilters';
 import Link from 'next/link';
@@ -14,6 +14,14 @@ interface MobileFiltersProps {
 export default function MobileFilters({ isOpen, onClose }: MobileFiltersProps) {
     const pathname = usePathname();
     const drawerRef = useRef<HTMLDivElement>(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setMounted(true);
+        }, 0);
+        return () => clearTimeout(timer);
+    }, []);
 
     // Lock body scroll when open
     useEffect(() => {
@@ -38,7 +46,7 @@ export default function MobileFilters({ isOpen, onClose }: MobileFiltersProps) {
         }
     }, [isOpen, onClose]);
 
-    if (typeof window === 'undefined') return null;
+    if (!mounted) return null;
 
     return createPortal(
         <>

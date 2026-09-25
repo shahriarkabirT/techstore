@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import { requirePermission } from '@/lib/auth';
 import { aggregateProfitByProduct, aggregateProfitDaily, aggregateProfitMetrics } from '@/lib/profitAggregation';
+import Expense from '@/models/Expense';
 
 export async function GET(request: Request) {
     try {
@@ -30,11 +31,56 @@ export async function GET(request: Request) {
             aggregateProfitDaily(query, useMonthly ? '%Y-%m' : '%Y-%m-%d'),
         ]);
 
+        const expenseQuery = { date: { $gte: startDate, $lte: endDate } };
+        const expenseAgg = await Expense.aggregate([
+            { $match: expenseQuery },
+            {
+                $group: {
+                    _id: { $dateToString: { format: useMonthly ? '%Y-%m' : '%Y-%m-%d', date: '$date' } },
+                    total: { $sum: '$amount' }
+                }
+            }
+        ]);
+
+        const totalExpenses = expenseAgg.reduce((acc, curr) => acc + curr.total, 0);
+
+        const dailyMap = new Map();
+        daily.forEach((d: any) => {
+            dailyMap.set(d.date, { ...d, operationalExpenses: 0 });
+        });
+
+        expenseAgg.forEach((e: any) => {
+            if (dailyMap.has(e._id)) {
+                dailyMap.get(e._id).operationalExpenses = e.total;
+            } else {
+                dailyMap.set(e._id, {
+                    date: e._id,
+                    grossProfit: 0,
+                    revenueWithCost: 0,
+                    revenueWithoutCost: 0,
+                    totalCogs: 0,
+                    operationalExpenses: e.total,
+                });
+            }
+        });
+
+        const mergedDaily = Array.from(dailyMap.values()).sort((a, b) => a.date.localeCompare(b.date));
+
+        mergedDaily.forEach((d: any) => {
+            d.netProfit = d.grossProfit - d.operationalExpenses;
+        });
+
+        const updatedSummary = {
+            ...summary,
+            operationalExpenses: totalExpenses,
+            netProfit: summary.grossProfit - totalExpenses,
+        };
+
         return NextResponse.json({
             success: true,
-            summary,
+            summary: updatedSummary,
             byProduct,
-            daily,
+            daily: mergedDaily,
             meta: {
                 startDate: startDate.toISOString(),
                 endDate: endDate.toISOString(),

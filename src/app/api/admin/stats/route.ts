@@ -5,6 +5,7 @@ import Product from '@/models/Product';
 import Category from '@/models/Category';
 import User from '@/models/User';
 import { requirePermission } from '@/lib/auth';
+import Expense from '@/models/Expense';
 import { aggregateProfitMetrics } from '@/lib/profitAggregation';
 
 export async function GET(request: Request) {
@@ -47,6 +48,9 @@ export async function GET(request: Request) {
             prevPeriodUsers,
             profitMetrics,
             prevProfitMetrics,
+            expenses,
+            prevExpenses,
+            inventoryValuation,
         ] = await Promise.all([
             // Current Period Stats
             Order.aggregate([
@@ -127,10 +131,55 @@ export async function GET(request: Request) {
             User.countDocuments({ role: 'user', createdAt: { $gte: prevStartDate, $lte: prevEndDate } }),
             aggregateProfitMetrics(query),
             aggregateProfitMetrics(prevQuery),
+            Expense.aggregate([
+                { $match: { date: { $gte: startDate, $lte: endDate } } },
+                { $group: { _id: null, totalSpent: { $sum: "$amount" } } }
+            ]),
+            Expense.aggregate([
+                { $match: { date: { $gte: prevStartDate, $lte: prevEndDate } } },
+                { $group: { _id: null, totalSpent: { $sum: "$amount" } } }
+            ]),
+            Product.aggregate([
+                {
+                    $project: {
+                        inventoryValue: {
+                            $cond: {
+                                if: { $eq: ["$productType", "single"] },
+                                then: { $multiply: [{ $ifNull: ["$productCost", 0] }, { $ifNull: ["$stock", 0] }] },
+                                else: {
+                                    $sum: {
+                                        $map: {
+                                            input: { $ifNull: ["$variants", []] },
+                                            as: "v",
+                                            in: { $multiply: [{ $ifNull: ["$$v.productCost", 0] }, { $ifNull: ["$$v.stock", 0] }] }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        totalValue: { $sum: "$inventoryValue" }
+                    }
+                }
+            ])
         ]);
 
         const current = stats[0] || { totalRevenue: 0, totalOrders: 0, paidOrders: 0, pendingOrders: 0 };
         const previous = prevStats[0] || { totalRevenue: 0, totalOrders: 0 };
+        const totalInventoryValue = inventoryValuation[0]?.totalValue || 0;
+
+        const currentExpenses = expenses[0]?.totalSpent || 0;
+        const previousExpenses = prevExpenses[0]?.totalSpent || 0;
+
+        const currentGrossProfit = profitMetrics.grossProfit || 0;
+        const currentNetProfit = currentGrossProfit - currentExpenses;
+        
+        const previousGrossProfit = prevProfitMetrics.grossProfit || 0;
+        const previousNetProfit = previousGrossProfit - previousExpenses;
 
         const calculateGrowth = (curr: number, prev: number) => {
             if (prev === 0) return curr > 0 ? 100 : 0;
@@ -159,8 +208,13 @@ export async function GET(request: Request) {
                     newUsers: periodUsers,
                     growth: calculateGrowth(periodUsers, prevPeriodUsers)
                 },
+                inventory: {
+                    totalValue: totalInventoryValue
+                },
                 profit: {
-                    grossProfit: profitMetrics.grossProfit,
+                    grossProfit: currentGrossProfit,
+                    totalExpenses: currentExpenses,
+                    netProfit: currentNetProfit,
                     totalCogs: profitMetrics.totalCogs,
                     revenueWithCost: profitMetrics.revenueWithCost,
                     revenueWithoutCost: profitMetrics.revenueWithoutCost,
@@ -168,9 +222,14 @@ export async function GET(request: Request) {
                     linesWithoutCost: profitMetrics.linesWithoutCost,
                     marginPercent:
                         profitMetrics.revenueWithCost > 0
-                            ? (profitMetrics.grossProfit / profitMetrics.revenueWithCost) * 100
+                            ? (currentGrossProfit / profitMetrics.revenueWithCost) * 100
                             : 0,
-                    growth: calculateGrowth(profitMetrics.grossProfit, prevProfitMetrics.grossProfit),
+                    netMarginPercent:
+                        profitMetrics.revenueWithCost > 0
+                            ? (currentNetProfit / profitMetrics.revenueWithCost) * 100
+                            : 0,
+                    growth: calculateGrowth(currentGrossProfit, previousGrossProfit),
+                    netGrowth: calculateGrowth(currentNetProfit, previousNetProfit),
                 },
             },
             charts: {

@@ -134,6 +134,7 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
         { href: '/admin/users', label: 'User Management', icon: 'users', permKey: 'users' },
         { href: '/admin/frauds', label: 'Fraud Protection', icon: 'shield', permKey: 'frauds' },
         { href: '/admin/refunds', label: 'Returns & Refunds', icon: 'refunds', permKey: 'refunds' },
+        { href: '/admin/expenses', label: 'Expenses', icon: 'expense', permKey: 'expenses' },
         
         { href: '/admin/messages', label: 'Messages', icon: 'messages', permKey: 'messages' },
         // { href: '/admin/chat', label: 'Live Chat', icon: 'chat', permKey: 'chat' },
@@ -283,6 +284,11 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 14.25l-3-3m0 0l3-3m-3 3h10.5c1.243 0 2.25.503 2.25 1.125v2.25c0 .622-.103.957-.25 1.125M15 9.75l3 3m0 0l-3 3m3-3H4.5" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" />
+                </svg>
+            ),
+            expense: (
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>
             ),
             reports: (

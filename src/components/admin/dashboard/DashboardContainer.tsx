@@ -68,7 +68,7 @@ export const DashboardContainer = () => {
         return (
             <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
                 <RefreshCcw className="animate-spin text-blue-600" size={32} />
-                <p className="text-gray-500 font-medium font-mono text-xs uppercase tracking-widest text-center">Calculating insights...</p>
+                <p className="text-gray-500 font-medium font-mono text-xs text-center">Calculating insights...</p>
             </div>
         );
     }
@@ -164,7 +164,7 @@ export const DashboardContainer = () => {
                     <div className="flex items-center justify-center py-8 border-t border-gray-50">
                         <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-full">
                             <TrendingUp size={14} className="text-gray-400" />
-                            <p className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">
+                            <p className="text-[10px] md:text-xs font-bold text-gray-400">
                                 All calculations are based on completed and paid transactions
                             </p>
                         </div>

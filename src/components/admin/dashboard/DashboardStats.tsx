@@ -9,7 +9,8 @@ import {
     Users,
     LineChart,
     Clock,
-    CheckCircle
+    CheckCircle,
+    Package
 } from 'lucide-react';
 
 interface StatCardProps {
@@ -25,9 +26,9 @@ const StatCard = ({ title, value, growth, icon, subtitle, color }: StatCardProps
     <div className="bg-white p-5 md:p-6 rounded-xl border border-gray-200 shadow-sm transition-all hover:shadow-md">
         <div className="flex justify-between items-start gap-4">
             <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">{title}</p>
+                <p className="text-[10px] xl:text-xs font-bold text-gray-500">{title}</p>
                 <div className="flex items-baseline gap-2 mt-2">
-                    <h3 className="text-xl md:text-2xl font-black text-gray-900 truncate">{value}</h3>
+                    <h3 className="text-lg xl:text-xl font-black text-gray-900 break-words">{value}</h3>
                 </div>
             </div>
             <div className="flex-shrink-0 text-gray-400">
@@ -53,12 +54,13 @@ export const DashboardStats = ({ data }: { data: any }) => {
         return new Intl.NumberFormat('en-BD', {
             style: 'currency',
             currency: 'BDT',
+            currencyDisplay: 'narrowSymbol',
             minimumFractionDigits: 0,
         }).format(price);
     };
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             <StatCard
                 title="Total Revenue"
                 value={formatPrice(data.revenue.value)}
@@ -94,6 +96,15 @@ export const DashboardStats = ({ data }: { data: any }) => {
                 color="bg-orange-600"
                 subtitle={`${data.users.newUsers} new registrations`}
             />
+            {data.inventory && (
+                <StatCard
+                    title="Inventory Value"
+                    value={formatPrice(data.inventory.totalValue)}
+                    icon={<Package className="text-indigo-600" />}
+                    color="bg-indigo-600"
+                    subtitle="Current total value of unsold stock"
+                />
+            )}
         </div>
     );
 };

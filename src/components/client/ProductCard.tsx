@@ -39,18 +39,32 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
 
         const isPreorder = product.preorder && product.stock <= 0;
 
-        const cartItemData = {
-            ...product,
-            productId: product._id || product.id || product.productId,
-            discountedPrice,
-            tax: product.tax || 0,
-            isPreorder
-        };
-
         if (action === 'buy') {
-            addToCart(cartItemData);
-            router.push('/checkout');
+            const directBuyItem = {
+                productId: product._id || product.id || product.productId,
+                title: product.title,
+                price: discountedPrice || product.mrp || product.price,
+                originalPrice: product.mrp || product.price,
+                discount: product.discountValue || product.discount,
+                discountType: product.discountType || 'percentage',
+                tax: product.tax || 0,
+                image: product.images?.[0] || '',
+                quantity: 1,
+                stock: product.stock || 0,
+                isPreorder
+            };
+            if (typeof window !== 'undefined') {
+                sessionStorage.setItem('directBuyItem', JSON.stringify([directBuyItem]));
+            }
+            router.push('/checkout?directBuy=true');
         } else {
+            const cartItemData = {
+                ...product,
+                productId: product._id || product.id || product.productId,
+                discountedPrice,
+                tax: product.tax || 0,
+                isPreorder
+            };
             addToCart(cartItemData);
         }
     };
@@ -142,23 +156,24 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
                         </div>
 
                         <div className="mt-8 flex items-center gap-4">
-                            <button
-                                onClick={(e) => handleAction(e, 'buy')}
-                                disabled={product.stock === 0 && !product.preorder}
-                                className="flex-grow py-3 bg-gray-900 text-white rounded-md font-black text-[11px] uppercase tracking-widest hover:bg-black transition-all shadow-md hover:shadow-lg active:scale-[0.98] disabled:bg-gray-100 disabled:text-gray-300 disabled:shadow-none cursor-pointer disabled:cursor-not-allowed"
-                            >
-                                {product.stock === 0 ? (
-                                    product.preorder ? (
-                                        <span className="flex items-center justify-center gap-2">
-                                            <span className="relative flex h-2 w-2">
-                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-                                            </span>
-                                            Pre-order Now
-                                        </span>
-                                    ) : 'Out of Stock'
-                                ) : 'Add to Bag'}
-                            </button>
+                            <div className="flex-grow flex gap-2">
+                                <button
+                                    onClick={(e) => handleAction(e, 'add')}
+                                    disabled={product.stock === 0 && !product.preorder}
+                                    className="flex-1 py-3 bg-white border border-gray-900 text-gray-900 rounded-md font-black text-[11px] uppercase tracking-widest hover:bg-gray-50 transition-all active:scale-[0.98] disabled:border-gray-200 disabled:text-gray-300 disabled:bg-gray-50 cursor-pointer disabled:cursor-not-allowed"
+                                >
+                                    {product.stock === 0 ? (
+                                        product.preorder ? 'Pre-order' : 'Out of Stock'
+                                    ) : 'Add to Cart'}
+                                </button>
+                                <button
+                                    onClick={(e) => handleAction(e, 'buy')}
+                                    disabled={product.stock === 0 && !product.preorder}
+                                    className="flex-1 py-3 bg-gray-900 text-white rounded-md font-black text-[11px] uppercase tracking-widest hover:bg-black transition-all shadow-md hover:shadow-lg active:scale-[0.98] disabled:bg-gray-100 disabled:text-gray-300 disabled:shadow-none cursor-pointer disabled:cursor-not-allowed"
+                                >
+                                    Buy Now
+                                </button>
+                            </div>
                             <button
                                 onClick={handleWishlist}
                                 aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
@@ -248,7 +263,7 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
             </div>
 
             {/* Info Section */}
-            <div className="px-4 pb-4 pt-1 flex flex-col flex-grow bg-white">
+            <div className="px-2 pb-4 pt-1 flex flex-col flex-grow bg-white">
                 <Link href={`/products/${product.slug}`} className="block group/title mb-2.5">
                     <h3 className="text-[14px] sm:text-[15px] font-normal text-gray-800 line-clamp-2 leading-snug group-hover/title:text-primary transition-colors">
                         {product.title}
@@ -270,43 +285,61 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
                     {(() => {
                         const cartItem = !hasVariants ? items.find(i => i.productId === product._id && !i.variant) : null;
                         const cartQty = cartItem?.quantity || 0;
+                        const hasCartQty = !hasVariants && cartQty > 0;
+                        
                         if (!hasVariants && cartQty > 0) {
-                            return (
-                                <div className="w-full flex items-center border border-primary rounded-[4px] overflow-hidden">
-                                    <button
-                                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateQuantity(product._id, cartQty - 1); }}
-                                        className="flex-1 py-2 text-primary hover:bg-primary/5 transition-colors text-base font-bold cursor-pointer"
-                                    >−</button>
-                                    <span className="flex-1 text-center text-[13px] font-black text-primary">{cartQty}</span>
-                                    <button
-                                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (cartQty < product.stock) updateQuantity(product._id, cartQty + 1); }}
-                                        disabled={cartQty >= product.stock}
-                                        className="flex-1 py-2 text-primary hover:bg-primary/5 transition-colors text-base font-bold disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
-                                    >+</button>
-                                </div>
-                            );
+                            // Empty to let the transition render correctly from the bottom block
                         }
+                        
                         return (
-                            <button
-                                onClick={(e) => handleAction(e, 'add')}
-                                disabled={product.stock === 0 && !product.preorder}
-                                className="w-full py-2 bg-white border border-primary text-primary rounded-[4px] font-medium text-[13px] hover:bg-primary hover:text-white transition-all disabled:opacity-50 disabled:border-gray-200 disabled:text-gray-400 disabled:bg-gray-50 disabled:cursor-not-allowed cursor-pointer flex justify-center items-center gap-1.5 group/btn"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-[18px] h-[18px]">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-                                </svg>
-                                {product.stock === 0 ? (
-                                    product.preorder ? (
-                                        <span className="flex items-center gap-2">
-                                            <span className="relative flex h-2 w-2">
-                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                            <div className="flex w-full transition-all duration-300 ease-in-out justify-between overflow-hidden h-[36px]">
+                                <div 
+                                    style={{ width: hasCartQty ? '100%' : 'calc(50% - 3px)' }} 
+                                    className="transition-all duration-300 ease-in-out overflow-hidden flex shrink-0 h-full"
+                                >
+                                    {hasCartQty ? (
+                                        <div className="w-full h-full flex items-center border border-primary rounded-[4px] overflow-hidden bg-white animate-in fade-in duration-300">
+                                            <button
+                                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateQuantity(product._id, cartQty - 1); }}
+                                                className="flex-1 h-full text-primary hover:opacity-70 transition-opacity text-base font-bold cursor-pointer flex items-center justify-center leading-none"
+                                            >−</button>
+                                            <span className="flex-[1.5] h-full flex items-center justify-center text-[13px] font-black text-primary border-x border-primary/10 leading-none">{cartQty}</span>
+                                            <button
+                                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (cartQty < product.stock) updateQuantity(product._id, cartQty + 1); }}
+                                                disabled={cartQty >= product.stock}
+                                                className="flex-1 h-full text-primary hover:opacity-70 transition-opacity text-base font-bold disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed flex items-center justify-center leading-none"
+                                            >+</button>
+                                        </div>
+                                    ) : (
+                                        <button
+                                            onClick={(e) => handleAction(e, 'add')}
+                                            disabled={product.stock === 0 && !product.preorder}
+                                            className="w-full h-full bg-white border border-primary text-primary rounded-[4px] font-medium text-[12px] sm:text-[13px] hover:bg-primary hover:text-white transition-all disabled:opacity-50 disabled:border-gray-200 disabled:text-gray-400 disabled:bg-gray-50 disabled:cursor-not-allowed cursor-pointer flex justify-center items-center gap-1 group/btn px-1 animate-in fade-in duration-300 leading-none"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 shrink-0">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                                            </svg>
+                                            <span className="truncate">
+                                                {product.stock === 0 ? (
+                                                    product.preorder ? 'Pre-order' : 'Out of Stock'
+                                                ) : 'Cart'}
                                             </span>
-                                            Pre-order Now
-                                        </span>
-                                    ) : 'Out of Stock'
-                                ) : 'Add To Cart'}
-                            </button>
+                                        </button>
+                                    )}
+                                </div>
+                                <div 
+                                    style={{ width: hasCartQty ? '0px' : 'calc(50% - 3px)', opacity: hasCartQty ? 0 : 1 }} 
+                                    className="transition-all duration-300 ease-in-out flex overflow-hidden shrink-0 h-full"
+                                >
+                                    <button
+                                        onClick={(e) => handleAction(e, 'buy')}
+                                        disabled={product.stock === 0 && !product.preorder}
+                                        className="w-full h-full whitespace-nowrap bg-primary text-white rounded-[4px] font-medium text-[12px] sm:text-[13px] hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex justify-center items-center px-1 leading-none"
+                                    >
+                                        Buy Now
+                                    </button>
+                                </div>
+                            </div>
                         );
                     })()}
                 </div>
