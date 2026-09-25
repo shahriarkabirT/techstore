@@ -263,10 +263,11 @@ export async function PUT(request, { params }) {
         if (stock !== undefined) product.stock = Number(stock);
         if (weight !== undefined) product.weight = weight !== null && weight !== '' ? Number(weight) : null;
         if (images !== undefined) product.images = images;
-        if (category !== undefined) product.category = category;
-        if (subCategory !== undefined) product.subCategory = subCategory;
-        if (childCategory !== undefined) product.childCategory = childCategory;
-        if (subChildCategory !== undefined) product.subChildCategory = subChildCategory;
+        const validId = (val: any) => (val && (!Array.isArray(val) || val.length > 0) && val !== '[]' && val !== 'null') ? val : null;
+        if (category !== undefined) product.category = validId(category);
+        if (subCategory !== undefined) product.subCategory = validId(subCategory);
+        if (childCategory !== undefined) product.childCategory = validId(childCategory);
+        if (subChildCategory !== undefined) product.subChildCategory = validId(subChildCategory);
         if (shortDescription !== undefined) product.shortDescription = shortDescription;
         if (fullDescription !== undefined) product.fullDescription = fullDescription;
         if (sizeGuide !== undefined) product.sizeGuide = sizeGuide;
@@ -287,7 +288,7 @@ export async function PUT(request, { params }) {
         if (tags !== undefined) product.tags = tags;
         if (seoMetadata !== undefined) product.seoMetadata = seoMetadata;
         if (isActive !== undefined) product.isActive = isActive;
-        if (brand !== undefined) product.brand = brand || undefined;
+        if (brand !== undefined) product.brand = validId(brand) || undefined;
         if (freeShipping !== undefined) product.freeShipping = !!freeShipping;
         if (preorder !== undefined) product.preorder = !!preorder;
         if (productType !== undefined) product.productType = productType;
