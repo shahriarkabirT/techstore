@@ -129,6 +129,8 @@ export async function POST(request: NextRequest) {
 
         // Fraud check IP and Phone
         const ipAddress = request.headers.get('x-forwarded-for') || request.headers.get('remote-addr') || '';
+        const fbc = request.cookies.get('_fbc')?.value;
+        const fbp = request.cookies.get('_fbp')?.value;
         
         const isFraud = await Fraud.findOne({
             $or: [
@@ -436,7 +438,14 @@ export async function POST(request: NextRequest) {
             eventID: `purchase_${order.orderId}`,
             orderId: order.orderId,
             totalAmount: order.totalAmount,
-            customerInfo: order.customerInfo,
+            customerInfo: {
+                email: order.customerInfo.email,
+                phone: order.customerInfo.phone,
+                name: order.customerInfo.name,
+                city: order.customerInfo.city,
+                fbc,
+                fbp
+            },
             products: order.products.map((p: any) => ({
                 productId: String(p.productId),
                 quantity: p.quantity,
