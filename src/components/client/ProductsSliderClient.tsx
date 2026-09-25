@@ -155,6 +155,17 @@ export default function ProductsSliderClient({ title, categorySlug, viewAllLink,
         const container = scrollContainerRef.current;
         if (!container) return;
 
+        const draggedDistance = Math.abs(touchStartX.current - touchLastX.current);
+        if (draggedDistance < 5) {
+            // It was just a tap, skip momentum and snapping
+            if (snapTimeoutRef.current) clearTimeout(snapTimeoutRef.current);
+            snapTimeoutRef.current = setTimeout(() => {
+                if (container) container.style.scrollSnapType = 'x mandatory';
+            }, 400);
+            scheduleUnpause();
+            return;
+        }
+
         // Kick off momentum animation
         let velocity = touchVelocity.current * 16; // scale to per-frame (≈16ms)
         const deceleration = 0.92;                  // friction coefficient (0.85–0.95)
@@ -217,7 +228,11 @@ export default function ProductsSliderClient({ title, categorySlug, viewAllLink,
     const finalizeDrag = () => {
         if (!isDragging) return;
         setIsDragging(false);
-        snapToNearest();
+        
+        if (dragDistance.current > 5) {
+            snapToNearest();
+        }
+        
         if (snapTimeoutRef.current) clearTimeout(snapTimeoutRef.current);
         snapTimeoutRef.current = setTimeout(() => {
             if (scrollContainerRef.current) {
