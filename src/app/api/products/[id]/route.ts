@@ -263,11 +263,21 @@ export async function PUT(request, { params }) {
         if (stock !== undefined) product.stock = Number(stock);
         if (weight !== undefined) product.weight = weight !== null && weight !== '' ? Number(weight) : null;
         if (images !== undefined) product.images = images;
-        const validId = (val: any) => (val && (!Array.isArray(val) || val.length > 0) && val !== '[]' && val !== 'null') ? val : null;
-        if (category !== undefined) product.category = validId(category);
-        if (subCategory !== undefined) product.subCategory = validId(subCategory);
-        if (childCategory !== undefined) product.childCategory = validId(childCategory);
-        if (subChildCategory !== undefined) product.subChildCategory = validId(subChildCategory);
+        const getValidId = (val: any): any => {
+            if (!val || val === 'null' || val === 'undefined' || val === '[]' || val === '') return undefined;
+            if (Array.isArray(val)) {
+                if (val.length === 0) return undefined;
+                const first = val[0];
+                if (!first || first === '') return undefined;
+                return String(first); 
+            }
+            return String(val);
+        };
+
+        if (category !== undefined) product.category = getValidId(category);
+        if (subCategory !== undefined) product.subCategory = getValidId(subCategory);
+        if (childCategory !== undefined) product.childCategory = getValidId(childCategory);
+        if (subChildCategory !== undefined) product.subChildCategory = getValidId(subChildCategory);
         if (shortDescription !== undefined) product.shortDescription = shortDescription;
         if (fullDescription !== undefined) product.fullDescription = fullDescription;
         if (sizeGuide !== undefined) product.sizeGuide = sizeGuide;
@@ -288,7 +298,7 @@ export async function PUT(request, { params }) {
         if (tags !== undefined) product.tags = tags;
         if (seoMetadata !== undefined) product.seoMetadata = seoMetadata;
         if (isActive !== undefined) product.isActive = isActive;
-        if (brand !== undefined) product.brand = validId(brand) || undefined;
+        if (brand !== undefined) product.brand = getValidId(brand);
         if (freeShipping !== undefined) product.freeShipping = !!freeShipping;
         if (preorder !== undefined) product.preorder = !!preorder;
         if (productType !== undefined) product.productType = productType;
