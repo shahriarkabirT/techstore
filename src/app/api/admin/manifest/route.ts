@@ -4,7 +4,7 @@ import Settings from '@/models/Settings';
 
 export async function GET() {
     let brandName = 'Admin Store';
-    let iconUrl = '/favicon.ico';
+    let iconUrl = '/logo.png';
     
     try {
         await dbConnect();
@@ -23,8 +23,8 @@ export async function GET() {
         description: `${brandName} Management Dashboard`,
         start_url: '/admin/dashboard',
         display: 'standalone',
-        background_color: '#ffffff',
-        theme_color: '#FF4F87',
+        background_color: '#1c1c1c',
+        theme_color: '#1c1c1c',
         icons: [
             {
                 src: iconUrl,

@@ -4,7 +4,7 @@ import Settings from '@/models/Settings';
 
 export default async function manifest(): Promise<MetadataRoute.Manifest> {
     let brandName = 'Store';
-    let iconUrl = '/favicon.ico';
+    let iconUrl = '/logo.png';
     
     try {
         await dbConnect();
@@ -24,7 +24,7 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
         start_url: '/',
         display: 'standalone',
         background_color: '#ffffff',
-        theme_color: '#FF4F87',
+        theme_color: '#111111',
         icons: [
             {
                 src: iconUrl,
