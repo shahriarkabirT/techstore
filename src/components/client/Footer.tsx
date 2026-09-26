@@ -101,7 +101,7 @@ export default function Footer() {
                     <div className="col-span-2 lg:col-span-1">
                         <div className="mb-3">
                             <Link href="/" className="inline-flex items-center">
-                                {logoSettings?.logoUrl ? (
+                                {/* {logoSettings?.logoUrl ? (
                                     <Image
                                         src={logoSettings.logoUrl}
                                         alt={brandName}
@@ -115,7 +115,18 @@ export default function Footer() {
                                     />
                                 ) : (
                                     <span className="text-xl font-black text-primary">{brandName}</span>
-                                )}
+                                )} */}
+                                <Image
+                                    src="/images/logo.png"
+                                    alt={brandName}
+                                    width={120}
+                                    height={40}
+                                    style={{
+                                        width: `120px`,
+                                        height: `40px`,
+                                    }}
+                                    className="object-contain object-left"
+                                />
                             </Link>
                             <p className="text-[14px] text-gray-500 leading-4.5 mt-1">
                                 {brandName} is an e-commerce platform dedicated to providing safe and reliable products to every home.

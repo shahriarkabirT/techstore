@@ -11,7 +11,7 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
         const settings = await Settings.findOne({});
         if (settings) {
             brandName = settings.brandName || brandName;
-            iconUrl = settings.faviconUrl || settings.logoUrl || iconUrl;
+            // iconUrl = settings.faviconUrl || settings.logoUrl || iconUrl;
         }
     } catch (error) {
         console.error('Error fetching settings for manifest:', error);

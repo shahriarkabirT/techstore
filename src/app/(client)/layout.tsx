@@ -37,7 +37,8 @@ export default async function ClientLayout({ children }: ClientLayoutProps) {
 
         if (settingsDoc) {
             logoSettings = {
-                logoUrl: settingsDoc.logoUrl || null,
+                // logoUrl: settingsDoc.logoUrl || null,
+                logoUrl: "/images/logo.png",
                 logoWidth: settingsDoc.logoWidth || 150,
                 logoHeight: settingsDoc.logoHeight || 50,
                 brandName: settingsDoc.brandName || null,

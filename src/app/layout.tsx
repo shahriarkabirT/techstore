@@ -8,7 +8,7 @@ import ReduxProvider from '@/components/providers/ReduxProvider';
 import AuthProvider from '@/components/providers/AuthProvider';
 import { Toaster } from 'react-hot-toast';
 
-import LazyChatWidget from '@/components/chat/LazyChatWidget';
+// import LazyChatWidget from '@/components/chat/LazyChatWidget';
 import { Suspense } from 'react';
 import dbConnect from '@/lib/db';
 import Settings from '@/models/Settings';
@@ -40,9 +40,6 @@ export const viewport = {
 
 export async function generateMetadata(): Promise<Metadata> {
     const settings = await getSettings();
-    const logoUrl = settings?.logoUrl;
-    const faviconUrl = settings?.faviconUrl;
-    const activeIcon = faviconUrl || logoUrl || '/favicon.ico';
     const brandName = settings?.brandName || 'Store';
 
     return {
@@ -62,11 +59,6 @@ export async function generateMetadata(): Promise<Metadata> {
             capable: true,
             statusBarStyle: 'default',
             title: brandName,
-        },
-        icons: {
-            icon: activeIcon,
-            apple: activeIcon,
-            shortcut: activeIcon,
         },
     };
 }

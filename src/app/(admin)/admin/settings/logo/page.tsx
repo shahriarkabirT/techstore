@@ -108,13 +108,16 @@ export default function LogoManagementPage() {
                     </div>
 
                     <div className={!isEditing ? "pointer-events-none opacity-80" : ""}>
-                        <LogoUploader
+                        {/* <LogoUploader
                             currentLogo={settings.logoUrl}
                             width={settings.logoWidth}
                             height={settings.logoHeight}
                             onUploadComplete={handleUploadComplete}
                             onDimensionsChange={handleDimensionsChange}
-                        />
+                        /> */}
+                        <div className="p-4 bg-amber-50 text-amber-800 border border-amber-200 rounded-lg text-sm font-medium">
+                            Dynamic logo upload is currently disabled. The system is using the static logo (/images/logo.png).
+                        </div>
                     </div>
                 </div>
 
@@ -130,10 +133,13 @@ export default function LogoManagementPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                         <div className="lg:col-span-5">
                             <div className={!isEditing ? "pointer-events-none opacity-80" : ""}>
-                                <FaviconUploader
+                                {/* <FaviconUploader
                                     currentFavicon={settings.faviconUrl}
                                     onUploadComplete={handleFaviconUpload}
-                                />
+                                /> */}
+                                <div className="p-4 bg-amber-50 text-amber-800 border border-amber-200 rounded-lg text-sm font-medium">
+                                    Dynamic favicon upload is currently disabled. The system is using the static favicon (/favicon.ico).
+                                </div>
                             </div>
 
                             <div className="mt-8 p-6 bg-gray-50 rounded-2xl border border-dashed border-gray-200">

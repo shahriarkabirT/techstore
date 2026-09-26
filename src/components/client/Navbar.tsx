@@ -77,9 +77,12 @@ export default function Navbar({ initialSettings }: NavbarProps) {
   const brandName = settings?.brandName || "Store";
 
   const logoSettings = {
-    url: settings?.logoUrl || "",
-    width: settings?.logoWidth || 120,
-    height: settings?.logoHeight || 40,
+    // url: settings?.logoUrl || "",
+    // width: settings?.logoWidth || 120,
+    // height: settings?.logoHeight || 40,
+    url: "/images/logo.png",
+    width: 120,
+    height: 40,
   };
 
   return (

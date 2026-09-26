@@ -5,13 +5,15 @@ import { useGetPublicSettingsQuery } from '@/redux/features/settings/settingsApi
 
 export default function DynamicFavicon() {
     const { data } = useGetPublicSettingsQuery();
-    const logoUrl = data?.settings?.logoUrl;
-    const faviconUrl = data?.settings?.faviconUrl;
+    // const logoUrl = data?.settings?.logoUrl;
+    // const faviconUrl = data?.settings?.faviconUrl;
+    // const activeIcon = faviconUrl || logoUrl;
 
-    const activeIcon = faviconUrl || logoUrl;
+    const activeIcon = '/favicon.ico';
 
     useEffect(() => {
-        if (!activeIcon) return;
+        // if (!activeIcon) return;
+        return;
 
         const updateLink = (rel: string, href: string) => {
             // Find ALL existing links with this rel and update them, or create one if none exist

@@ -46,7 +46,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AboutPage() {
   const settings = await getSettings();
   const brandName = settings?.brandName || "Ccloud";
-  const logoUrl = settings?.logoUrl || "/images/about_logo.png";
+  // const logoUrl = settings?.logoUrl || "/images/about_logo.png";
+  const logoUrl = "/images/logo.png";
 
   const jsonLd = {
     "@context": "https://schema.org",

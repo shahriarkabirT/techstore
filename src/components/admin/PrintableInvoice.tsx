@@ -24,7 +24,8 @@ export default function PrintableInvoice({ order }: PrintableInvoiceProps) {
     const storePhone = settings?.contactPhone || '';
     const storeEmail = settings?.contactEmail || '';
     const storeAddress = settings?.address || '';
-    const logoUrl = settings?.logoUrl;
+    // const logoUrl = settings?.logoUrl;
+    const logoUrl = '/images/logo.png';
 
     const formatPrice = (price: number) => {
         return `৳${price.toLocaleString('en-BD')}`;
