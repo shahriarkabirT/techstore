@@ -5,6 +5,7 @@ import { useState, Suspense } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { AdminSocketProvider, useAdminSocket } from '@/context/AdminSocketContext';
+import AdminInstallButton from '@/components/admin/AdminInstallButton';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -524,6 +525,7 @@ function AdminLayoutContent({
                     </div>
 
                     <div className="p-4 border-t border-gray-200 space-y-1 bg-white">
+                        <AdminInstallButton />
                         <Link
                             href="/"
                             className="flex items-center gap-3 px-3 py-2 w-full text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
