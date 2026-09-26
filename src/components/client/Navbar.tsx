@@ -81,8 +81,8 @@ export default function Navbar({ initialSettings }: NavbarProps) {
     // width: settings?.logoWidth || 120,
     // height: settings?.logoHeight || 40,
     url: "/images/logo.png",
-    width: 120,
-    height: 40,
+    width: 65,
+    height: 65,
   };
 
   return (

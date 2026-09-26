@@ -862,17 +862,17 @@ export default function LandingPageClient({
                     </div>
                   </div>
                   <div className="p-3 sm:p-6">
-                    <h4 className="text-white text-xs sm:text-base font-black mb-1 truncate">
+                    <h4 className="text-white text-xs sm:text-base font-black mb-1 line-clamp-3">
                       {p.title}
                     </h4>
                     {p.shortDescription && (
-                      <p className="text-white/40 text-[10px] sm:text-xs leading-relaxed line-clamp-1 mb-2 sm:mb-4">
+                      <p className="text-white/40 text-[10px] sm:text-xs leading-relaxed line-clamp-3 mb-2 sm:mb-4">
                         {p.shortDescription}
                       </p>
                     )}
-                    <div className="text-[#d4a843] text-sm sm:text-xl font-black">
+                    {/* <div className="text-[#d4a843] text-sm sm:text-xl font-black">
                       {formatCurrency(p.price)}
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               ))}

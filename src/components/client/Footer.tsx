@@ -119,11 +119,11 @@ export default function Footer() {
                                 <Image
                                     src="/images/logo.png"
                                     alt={brandName}
-                                    width={120}
-                                    height={40}
+                                    width={180}
+                                    height={60}
                                     style={{
-                                        width: `120px`,
-                                        height: `40px`,
+                                        width: `180px`,
+                                        height: `60px`,
                                     }}
                                     className="object-contain object-left"
                                 />
