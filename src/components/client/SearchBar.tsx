@@ -93,6 +93,7 @@ export default function SearchBar({
                                             src={product.images[0]}
                                             alt={product.title}
                                             fill
+                                            sizes="40px"
                                             className="object-cover"
                                         />
                                     ) : (

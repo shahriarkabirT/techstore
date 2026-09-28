@@ -264,11 +264,11 @@ export async function PUT(request, { params }) {
         if (weight !== undefined) product.weight = weight !== null && weight !== '' ? Number(weight) : null;
         if (images !== undefined) product.images = images;
         const getValidId = (val: any): any => {
-            if (!val || val === 'null' || val === 'undefined' || val === '[]' || val === '') return undefined;
+            if (val === null || val === '' || val === 'null' || val === 'undefined' || val === '[]') return null;
             if (Array.isArray(val)) {
-                if (val.length === 0) return undefined;
+                if (val.length === 0) return null;
                 const first = val[0];
-                if (!first || first === '') return undefined;
+                if (!first || first === '') return null;
                 return String(first); 
             }
             return String(val);

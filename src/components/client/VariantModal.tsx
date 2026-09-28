@@ -235,6 +235,7 @@ export default function VariantModal({ product, isOpen, onClose }: VariantModalP
                                 src={mainImage || product.images[0]}
                                 alt={product.title}
                                 fill
+                                sizes="96px"
                                 className="object-cover"
                             />
                         </div>

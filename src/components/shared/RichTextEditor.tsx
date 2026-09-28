@@ -2,8 +2,6 @@
 
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
-import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { Extension } from '@tiptap/core';
@@ -227,13 +225,12 @@ export default function RichTextEditor({ value, onChange, placeholder, className
                     keepMarks: true,
                     keepAttributes: true,
                 },
+                link: {
+                    openOnClick: false,
+                },
             }),
-            Underline,
             TextStyle,
             CustomFontSize as any,
-            Link.configure({
-                openOnClick: false,
-            }),
             Placeholder.configure({
                 placeholder: placeholder || 'Write something...',
             }),

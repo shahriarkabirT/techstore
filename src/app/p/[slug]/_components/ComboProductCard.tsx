@@ -110,7 +110,7 @@ export default function ComboProductCard({
 
                     {/* Product Image */}
                     <div className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-lg overflow-hidden border border-gray-100 shrink-0 bg-gray-50">
-                        <Image src={displayImage} alt={product.title} fill className="object-cover" />
+                        <Image src={displayImage} alt={product.title} fill sizes="(max-width: 640px) 40px, 64px" className="object-cover" />
                     </div>
 
                     {/* Info */}

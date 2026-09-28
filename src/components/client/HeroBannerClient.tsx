@@ -284,6 +284,7 @@ export default function HeroBannerClient({ banners }: HeroBannerClientProps) {
                                             src={banner.image}
                                             alt={banner.title}
                                             fill
+                                            sizes="(max-width: 768px) 50vw, 25vw"
                                             priority={index === 0} 
                                             className="object-cover transition-transform duration-700 group-hover:scale-105"
                                         />
@@ -319,6 +320,7 @@ export default function HeroBannerClient({ banners }: HeroBannerClientProps) {
                                             src={banner.image}
                                             alt={banner.title}
                                             fill
+                                            sizes="(max-width: 768px) 50vw, 25vw"
                                             priority={index === 0} 
                                             className="object-cover transition-transform duration-700 group-hover:scale-105"
                                         />
