@@ -1,6 +1,10 @@
 import Order from '@/models/Order';
 
-const paidMatch = (base: Record<string, unknown>) => ({ ...base, paymentStatus: 'Paid' as const });
+const paidMatch = (base: Record<string, unknown>) => ({ 
+    ...base, 
+    paymentStatus: 'Paid',
+    orderStatus: { $nin: ['Cancelled', 'Returned', 'Blocked'] }
+});
 
 /** Line-level fields used in profit pipelines */
 const lineFieldsStage = {

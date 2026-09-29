@@ -1,98 +1,142 @@
-# Meta Conversions API & Catalog Guide for Marketers
-*Target Audience: Marketing Team, Growth Hackers, and Ads Specialists*
+# Meta Pixel & Conversions API Configuration Guide
 
-Welcome to the **ccloudlab.com** Meta tracking architecture guide. This document details how our state-of-the-art tracking system is implemented, how it optimizes your ad spend, and how you can manage and verify it within **Meta Events Manager**.
+*Target Audience: Marketing Team & Developers*
+
+This guide outlines the step-by-step process for configuring our hybrid tracking system, where **both** the Meta Pixel (client-side) and Conversions API (server-side) are implemented directly in our application's source code, completely bypassing Google Tag Manager (GTM).
 
 ---
 
-## 🚀 1. The Architecture: Hybrid Tracking
+## 🏗️ 1. The Architecture Overview
 
-To combat ad-blockers, browser tracking protections, and iOS 14+ limitations, we have implemented a **Hybrid Tracking System**. This system tracks conversions through two simultaneous channels:
+Our tracking system relies on two simultaneous data streams that Meta merges into a single deduplicated event:
+
+1. **Client-Side (React/Next.js Code)**: Triggers the Meta Pixel directly in the browser using the standard `fbq()` function.
+2. **Server-Side (Node.js/Next.js API)**: Triggers a secure, unblockable event from our backend.
 
 ```mermaid
 graph TD
-    User[Customer Purchase] -->|Browser Event| BrowserPixel[Meta Pixel client-side]
-    User -->|Server Event| ServerCAPI[Conversions API server-side]
+    User[Customer Action] -->|Client Code Execution| BrowserPixel[Meta Pixel fbq]
+    User -->|API Call| ServerCAPI[Custom Code CAPI server-side]
     BrowserPixel -->|Sends event_id| Meta[Meta Events Manager]
     ServerCAPI -->|Sends matching event_id| Meta
     Meta -->|Deduplication| UnifiedEvent[Single Deduplicated Conversion]
 ```
 
-1. **Client-Side (Meta Pixel)**: Tracks events directly in the customer's browser. It is fast and captures browser context, but can be blocked by ad-blockers or Safari's Intelligent Tracking Prevention (ITP).
-2. **Server-Side (Conversions API - CAPI)**: Tracks events directly from our secure Node.js server. It is **100% unblockable** by browser extensions, ad-blockers, or VPNs, guaranteeing that every single transaction is reported to Meta.
+---
+
+## 🛠️ Step 1: Configure Client-Side Pixel (Direct Code)
+
+Instead of pushing to a data layer, we initialize the Facebook Pixel snippet globally and call `fbq()` directly from our frontend components.
+
+### A. Initializing the Pixel
+Add the base Facebook Pixel script to your global application layout (e.g., `app/layout.tsx` or `pages/_app.tsx`).
+
+### B. Triggering Events (Developer)
+When a user takes an action (like completing a purchase), you trigger the event directly. **You must generate and pass a unique `eventID`** so Meta can deduplicate it with the server event.
+
+Example for a **Purchase** event triggered in a React component:
+```javascript
+// Function called upon successful checkout
+const trackPurchase = (orderData) => {
+  // 1. Must match the event_id sent from the server!
+  const eventId = `purchase_${orderData.orderId}`; 
+
+  // 2. Fire the standard Pixel event
+  if (typeof window !== 'undefined' && window.fbq) {
+    window.fbq(
+      'track', 
+      'Purchase', 
+      {
+        value: orderData.totalAmount,
+        currency: 'BDT',
+        content_ids: orderData.items.map(item => item.id),
+        content_type: 'product',
+        // Advanced matching parameters (unhashed on client-side)
+        em: orderData.customerEmail,
+        ph: orderData.customerPhone,
+        fn: orderData.customerFirstName,
+        ln: orderData.customerLastName
+      },
+      // 3. Pass the eventID in the eventData object for deduplication
+      { eventID: eventId }
+    );
+  }
+};
+```
 
 ---
 
-## 🛡️ 2. Event Deduplication (Zero Double-Counting)
+## 💻 Step 2: Configure Custom Code CAPI (Server-Side)
 
-Because we trigger both a Pixel event and a CAPI event for a single purchase, Meta needs to know they represent the same transaction. 
+Our backend server captures the exact same order and sends it directly to the Meta Graph API.
 
-We achieve **perfect deduplication** by attaching a unique, matching `eventID` to both events:
-* **The Unique Key**: `purchase_{orderId}` (e.g. `purchase_202605191245`)
-* **How Meta Handles It**: When Meta's servers receive the browser Pixel event and the CAPI server event with the **exact same `eventID`**, it automatically merges them, keeping only one conversion.
-* **Why it's crucial**: This protects your ads reporting from double-counting sales, giving you accurate ROAS (Return on Ad Spend) metrics.
+### A. Environment Variables
+Ensure your production server has the following credentials:
+```env
+META_PIXEL_ID=your_pixel_id
+META_ACCESS_TOKEN=your_conversions_api_access_token
+```
+
+### B. The API Request (Developer)
+The server must send an HTTP POST request to the Meta Graph API. 
+
+*Key Requirements for the server payload:*
+- `event_name` must perfectly match the Pixel event (e.g., `"Purchase"`).
+- `event_id` **MUST BE IDENTICAL** to the `eventID` passed to the `fbq()` call on the client.
+- Customer data (Email, Phone) must be hashed using **SHA-256** before sending.
+
+Example Server Payload (`POST https://graph.facebook.com/v19.0/{META_PIXEL_ID}/events`):
+```json
+{
+  "data": [
+    {
+      "event_name": "Purchase",
+      "event_time": 1716124500,
+      "event_id": "purchase_123456789", 
+      "action_source": "website",
+      "user_data": {
+        "client_ip_address": "192.168.1.1",
+        "client_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)...",
+        "em": ["f660ab912ec121d1b1e928a0bb4bc61b15f5ad44d5efdc4e1c92a25e99b8e44a"],
+        "ph": ["254aa248acb47dd654ca3ea53f48c2c26d641d23d7e2e93a1bf5b4fac369408b"]
+      },
+      "custom_data": {
+        "currency": "BDT",
+        "value": 1500.00,
+        "content_ids": ["69f78cb1f5c096a3f7b8a642"],
+        "content_type": "product"
+      }
+    }
+  ],
+  "access_token": "your_conversions_api_access_token"
+}
+```
 
 ---
 
-## 👥 3. Manual Advanced Matching (Hashed Customer Data)
+## 🛡️ Step 3: Verifying Event Deduplication
 
-To increase your Meta **Event Match Quality Score** (which directly improves custom audience sizing and retargeting precision), we send customer data points securely hashed using **SHA-256** (industry standard):
+Because we are firing two events (Direct Client Pixel + Server CAPI), we must verify that Meta is merging them to prevent double-counting sales.
 
-### What is sent client-side (Pixel):
-* Email
-* Phone number
-* First Name & Last Name (automatically parsed from the full name field!)
-* City
-* Country (`bd`)
-
-### What is sent server-side (CAPI):
-* Hashed Email (`em`)
-* Hashed Phone Number (`ph`)
-* Client IP Address (`client_ip_address`)
-* Client Browser User-Agent (`client_user_agent`)
-* Unique External ID (`external_id` generated securely from hashed customer identifiers)
-
----
-
-## 🛍️ 4. Dynamic Catalog Sync (Real-time Feed)
-
-To power **Dynamic Product Ads (DPA)** and retarget users with the exact products they viewed or added to the cart, your Meta Pixel `content_ids` must perfectly match the `id` of the products in your Meta Commerce Catalog.
-
-* **Pixel tracked ID**: Sends the MongoDB ObjectID `_id` (e.g., `69f78cb1f5c096a3f7b8a642`).
-* **Live Catalog Feed**: We have created a dynamic XML feed at:
-  👉 **`https://{domain_name}/api/products/facebook-feed?file=.xml`**
-* **The Match**: This feed exports all active catalog items from the database with `<g:id>` mapped to the MongoDB `_id`, guaranteeing a **100% catalog match rate** and enabling dynamic retargeting without warnings.
-
----
-
-## 🛠️ 5. Marketer's Guide: Steps to Verify in Meta Events Manager
-
-Here is how you can verify and monitor this setup inside your Meta Business Account:
-
-### A. How to check Event Match Quality
 1. Go to **Meta Events Manager**.
-2. Select your Pixel **{Brand Name}**.
-3. Under the **Overview** tab, look at the **Purchase** event.
-4. Verify the **Event Match Quality Score**. It should be rated **Good** or **Excellent** because we are sending advanced matching customer parameters (email, phone, ip, name, city).
-
-### B. How to check Deduplication Rate
-1. Inside **Events Manager**, select the **Purchase** event.
-2. Click **View Details**.
-3. Look at the **Deduplication** status. It should show a high deduplication percentage (approaching 100%), confirming that Meta is successfully merging the browser and server events using the `eventID`.
-
-### C. How to Test Events in Real-Time
-To test the server-side integration without placing a real order:
-1. Go to **Events Manager** -> **Test events** tab.
-2. Under "Test server events", copy your **Test Event Code** (e.g., `TEST12345`).
-3. If you want to route test events in development, add the test code to your server environment file (`.env.local`) under `META_TEST_EVENT_CODE`.
-4. Run a checkout flow, and you will see the CAPI event instantly appear in the Meta Events Manager log with a "Server" label.
+2. Select your Data Source (Pixel).
+3. Under the **Overview** tab, click on the **Purchase** event to open its details.
+4. Look at the **Event Responses** tab. You should see both **Browser** and **Server** receiving events.
+5. Click on **Deduplication**. It should show a high overlap and state that events are being successfully deduplicated. 
+   - *If deduplication fails, verify that the `eventID` in the `fbq()` call perfectly matches the `event_id` sent by your server code.*
 
 ---
 
-## 📋 6. Summary Checklist for Your Next Campaign Launch
+## ✅ Step 4: Testing the Setup
 
-- [ ] **Catalog Source**: Ensure your catalog data source is set to a **Scheduled Feed** pointing to:
-  `https://{domain_name}/api/products/facebook-feed?file=.xml`
-- [ ] **Pixel Setup**: Verify the client Pixel is active on `{domain_name}`.
-- [ ] **Conversions API**: Confirm server-side Purchase tracking is active (triggered automatically upon any successful landing page order or standard checkout).
-- [ ] **ROAS Tracking**: Verify that currency is reported correctly as **BDT** and purchase values exclude/include shipping fees according to your reporting preference.
+1. **Test Browser Events (Client-Side)**:
+   - Install the **Meta Pixel Helper** Chrome extension.
+   - Trigger a test event on your website.
+   - Click the Pixel Helper extension and verify the event fired successfully, expanding it to ensure the `Event ID` is attached.
+
+2. **Test CAPI Events (Server-Side)**:
+   - Go to **Events Manager -> Test Events**.
+   - Copy your **Test Event Code** (e.g., `TEST12345`).
+   - Append this code to your server payload under the `test_event_code` parameter.
+   - Run a test checkout. 
+   - Verify that the event instantly appears in the Test Events tab with the "Server" label, and eventually merges with the "Browser" event.
