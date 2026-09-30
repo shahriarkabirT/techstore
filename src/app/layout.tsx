@@ -74,7 +74,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     const tiktokPixelId = (settings as any)?.tiktokPixelId;
 
     return (
-        <html lang="en">
+        <html lang="en" data-theme="light">
             <head>
                 {/* Google Tag Manager - Head Script */}
                 {gtmId && (

@@ -506,9 +506,9 @@ export default function VariantManager({
                                                 type="button"
                                                 onClick={() => onApplyToGlobal(variant)}
                                                 className="ml-auto text-[10px] font-bold bg-black text-white px-2 py-1 rounded hover:bg-gray-800 transition-colors"
-                                                title="Apply this variant's pricing to all variants"
+                                                title="Apply this variant's pricing to global defaults"
                                             >
-                                                Apply to All
+                                                Apply to Global
                                             </button>
                                         )}
                                     </div>
@@ -530,9 +530,25 @@ export default function VariantManager({
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-[9px] font-bold uppercase tracking-widest text-emerald-600 mb-1">
-                                                    Stock
-                                                </label>
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <label className="block text-[9px] font-bold uppercase tracking-widest text-emerald-600">
+                                                        Stock
+                                                    </label>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            const updated = variants.map(v => ({ ...v, stock: variant.stock }));
+                                                            onChange(updated);
+                                                        }}
+                                                        className="text-[9px] font-bold flex items-center gap-1 text-emerald-600 hover:text-emerald-800 transition-colors bg-emerald-50 hover:bg-emerald-100 px-1.5 py-0.5 rounded"
+                                                        title="Apply this stock to all variants"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-2.5 h-2.5">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
+                                                        </svg>
+                                                        ALL
+                                                    </button>
+                                                </div>
                                                 <input
                                                     type="number"
                                                     value={variant.stock === 0 ? '' : variant.stock}
