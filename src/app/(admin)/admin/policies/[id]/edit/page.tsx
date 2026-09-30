@@ -222,7 +222,7 @@ export default function EditPolicyPage({ params }: { params: Promise<{ id: strin
                                 <div className="border border-gray-200 rounded-xl p-4">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Preview</p>
                                     <div
-                                        className="prose prose-sm max-w-none"
+                                        className="prose prose-sm max-w-none break-words overflow-x-auto text-black prose-p:text-black prose-headings:text-black prose-li:text-black prose-strong:text-black"
                                         dangerouslySetInnerHTML={{ __html: formData.content }}
                                     />
                                 </div>

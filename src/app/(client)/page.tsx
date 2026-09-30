@@ -11,7 +11,6 @@ import { CategoryCardSkeleton, ProductCardSkeleton } from '@/components/shared/S
 import Testimonials from '@/components/client/Testimonials';
 import PromotionalBanners from '@/components/client/PromotionalBanners';
 import MidProductShowcase from '@/components/client/MidProductShowcase';
-import TrustBar from '@/components/client/TrustBar';
 
 export default async function HomePage() {
     return (
@@ -142,9 +141,6 @@ export default async function HomePage() {
             }>
                 <FeaturedProducts />
             </Suspense>
-
-            {/* Brand Promise / Trust Bar — reassurance before Testimonials */}
-            <TrustBar />
 
             {/* Testimonials */}
             <Testimonials />
