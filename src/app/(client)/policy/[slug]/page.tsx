@@ -57,7 +57,7 @@ export default function PolicyDetailPage({ params }: { params: Promise<{ slug: s
                     <div 
                         className="rich-text-content prose prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary prose-img:rounded-xl prose-img:shadow-sm overflow-x-auto"
                         style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
-                        dangerouslySetInnerHTML={{ __html: policy.content }}
+                        dangerouslySetInnerHTML={{ __html: policy.content.replace(/^```html\s*/i, '').replace(/```\s*$/i, '') }}
                     />
                 </div>
             </div>

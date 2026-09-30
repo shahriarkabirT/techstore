@@ -10,37 +10,24 @@
   max-width: 100%;
 }
 
-/* Override Tailwind prose colors — force black when no inline color is set */
-.rich-text-content p:not([style*="color"]),
-.rich-text-content span:not([style*="color"]),
-.rich-text-content li:not([style*="color"]),
-.rich-text-content strong:not([style*="color"]),
-.rich-text-content em:not([style*="color"]),
-.rich-text-content h1:not([style*="color"]),
-.rich-text-content h2:not([style*="color"]),
-.rich-text-content h3:not([style*="color"]),
-.rich-text-content h4:not([style*="color"]),
-.rich-text-content h5:not([style*="color"]),
-.rich-text-content h6:not([style*="color"]),
-.rich-text-content blockquote:not([style*="color"]),
-.rich-text-content div:not([style*="color"]) {
-  color: #000000 !important;
-}
-
-/* Also override when prose class is combined */
-.prose.rich-text-content,
-.prose.rich-text-content p,
-.prose.rich-text-content span,
-.prose.rich-text-content li,
-.prose.rich-text-content strong,
-.prose.rich-text-content em,
-.prose.rich-text-content h1,
-.prose.rich-text-content h2,
-.prose.rich-text-content h3,
-.prose.rich-text-content h4,
-.prose.rich-text-content h5,
-.prose.rich-text-content h6 {
-  color: #000000 !important;
+.rich-text-content {
+  --tw-prose-body: #000000;
+  --tw-prose-headings: #000000;
+  --tw-prose-lead: #000000;
+  --tw-prose-links: #4f46e5;
+  --tw-prose-bold: #000000;
+  --tw-prose-counters: #000000;
+  --tw-prose-bullets: #000000;
+  --tw-prose-hr: #e5e7eb;
+  --tw-prose-quotes: #000000;
+  --tw-prose-quote-borders: #e5e7eb;
+  --tw-prose-captions: #6b7280;
+  --tw-prose-code: #000000;
+  --tw-prose-pre-code: #000000;
+  --tw-prose-pre-bg: #f3f4f6;
+  --tw-prose-th-borders: #e5e7eb;
+  --tw-prose-td-borders: #e5e7eb;
+  color: var(--tw-prose-body);
 }
 
 /* Prevent wide HTML content from breaking layout */

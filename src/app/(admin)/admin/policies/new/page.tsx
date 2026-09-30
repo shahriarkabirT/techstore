@@ -185,7 +185,7 @@ export default function NewPolicyPage() {
                                     <div
                                         className="rich-text-content prose prose-sm max-w-none overflow-x-auto"
                                         style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
-                                        dangerouslySetInnerHTML={{ __html: formData.content }}
+                                        dangerouslySetInnerHTML={{ __html: formData.content.replace(/^```html\s*/i, '').replace(/```\s*$/i, '') }}
                                     />
                                 </div>
                             )}
