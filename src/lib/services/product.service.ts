@@ -147,8 +147,6 @@ export async function getProductsList(params: {
                     { compatibleModels: re },
                     { sku: re },
                     { 'seoMetadata.keywords': re },
-                    // attributes is a Map — search both keys and values via $elemMatch on the map entries
-                    { 'variants.attributes': re },
                     { 'variants.sku': re },
                 ],
             };
