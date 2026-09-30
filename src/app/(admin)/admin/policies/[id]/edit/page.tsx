@@ -219,10 +219,11 @@ export default function EditPolicyPage({ params }: { params: Promise<{ id: strin
                                 spellCheck={false}
                             />
                             {formData.content && (
-                                <div className="border border-gray-200 rounded-xl p-4">
+                                <div className="border border-gray-200 rounded-xl p-4 overflow-hidden">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Preview</p>
                                     <div
-                                        className="prose prose-sm max-w-none break-words overflow-x-auto text-black prose-p:text-black prose-headings:text-black prose-li:text-black prose-strong:text-black"
+                                        className="rich-text-content prose prose-sm max-w-none overflow-x-auto"
+                                        style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
                                         dangerouslySetInnerHTML={{ __html: formData.content }}
                                     />
                                 </div>

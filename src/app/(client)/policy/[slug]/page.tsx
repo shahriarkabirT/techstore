@@ -53,9 +53,10 @@ export default function PolicyDetailPage({ params }: { params: Promise<{ slug: s
             </div>
 
             <div className="container mx-auto px-4 max-w-4xl mt-12">
-                <div className="bg-white">
+                <div className="bg-white overflow-hidden">
                     <div 
-                        className="rich-text-content prose prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary prose-img:rounded-xl prose-img:shadow-sm break-words overflow-x-auto text-black prose-p:text-black prose-headings:text-black prose-li:text-black prose-strong:text-black"
+                        className="rich-text-content prose prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary prose-img:rounded-xl prose-img:shadow-sm overflow-x-auto"
+                        style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
                         dangerouslySetInnerHTML={{ __html: policy.content }}
                     />
                 </div>

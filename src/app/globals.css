@@ -5,8 +5,12 @@
 .rich-text-content {
   line-height: 1.6;
   color: #000000 !important;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  max-width: 100%;
 }
 
+/* Override Tailwind prose colors — force black when no inline color is set */
 .rich-text-content p:not([style*="color"]),
 .rich-text-content span:not([style*="color"]),
 .rich-text-content li:not([style*="color"]),
@@ -18,8 +22,39 @@
 .rich-text-content h4:not([style*="color"]),
 .rich-text-content h5:not([style*="color"]),
 .rich-text-content h6:not([style*="color"]),
-.rich-text-content blockquote:not([style*="color"]) {
+.rich-text-content blockquote:not([style*="color"]),
+.rich-text-content div:not([style*="color"]) {
   color: #000000 !important;
+}
+
+/* Also override when prose class is combined */
+.prose.rich-text-content,
+.prose.rich-text-content p,
+.prose.rich-text-content span,
+.prose.rich-text-content li,
+.prose.rich-text-content strong,
+.prose.rich-text-content em,
+.prose.rich-text-content h1,
+.prose.rich-text-content h2,
+.prose.rich-text-content h3,
+.prose.rich-text-content h4,
+.prose.rich-text-content h5,
+.prose.rich-text-content h6 {
+  color: #000000 !important;
+}
+
+/* Prevent wide HTML content from breaking layout */
+.rich-text-content img,
+.rich-text-content video,
+.rich-text-content iframe,
+.rich-text-content table {
+  max-width: 100% !important;
+  height: auto;
+}
+
+.rich-text-content pre {
+  max-width: 100% !important;
+  overflow-x: auto !important;
 }
 
 
