@@ -316,9 +316,9 @@ function ProductForm({ product, id }: { product: any; id: string }) {
                                   return Number.isFinite(n) && n >= 0 ? n : null;
                               })(),
                     productType: formData.productType,
-                    subCategory: formData.subCategory || null,
-                    childCategory: formData.childCategory || null,
-                    subChildCategory: formData.subChildCategory || null,
+                    subCategory: (formData.subCategory || null) as any,
+                    childCategory: (formData.childCategory || null) as any,
+                    subChildCategory: (formData.subChildCategory || null) as any,
                     brand: (formData.brand || undefined) as any,
                 }
             }).unwrap();

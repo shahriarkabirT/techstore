@@ -287,9 +287,9 @@ export default function NewProductPage() {
                     formData.productCost === '' || formData.productCost == null
                         ? undefined
                         : Math.max(0, Number(formData.productCost)),
-                subCategory: formData.subCategory || null,
-                childCategory: formData.childCategory || null,
-                subChildCategory: formData.subChildCategory || null,
+                subCategory: (formData.subCategory || null) as any,
+                childCategory: (formData.childCategory || null) as any,
+                subChildCategory: (formData.subChildCategory || null) as any,
                 brand: (formData.brand || undefined) as any,
             }).unwrap();
 
