@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useMemo, useEffect } from 'react';
 import { useGetCategoryTreeQuery } from '@/redux/features/categories/categoryApi';
 import { useGetBrandsQuery } from '@/redux/features/brand/brandApi';
@@ -46,7 +46,7 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
     const filterableAttributes = useMemo(() => attributesData?.attributes?.filter((a: any) => a.isActive && a.isFilterable) || [], [attributesData?.attributes]);
     const router = useRouter();
     const searchParams = useSearchParams();
-    const pathname = usePathname();
+
 
     const [minPrice, setMinPrice] = useState(searchParams.get('minPrice') || '');
     const [maxPrice, setMaxPrice] = useState(searchParams.get('maxPrice') || '');
@@ -308,7 +308,7 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
 
             {/* Filter by Brand — only shown if brands exist */}
             {activeBrands.length > 0 && (
-                <div className="rounded-lg border border-gray-100 shadow-[0_1px_8px_rgba(0,0,0,0.04)] bg-white p-4">
+                <div className="rounded-lg border border-gray-100 shadow-[0_1px_8px_rgba(0,0,0,0.04)] bg-white p-4 lg:hidden">
                     <button
                         onClick={() => toggleSection('brands')}
                         className="flex items-center justify-between w-full text-xs font-semibold text-gray-900 mb-3 group cursor-pointer"

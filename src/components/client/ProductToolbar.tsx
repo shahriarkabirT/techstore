@@ -3,6 +3,8 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import { useGetCategoriesQuery } from '@/redux/features/categories/categoryApi';
+import { useGetBrandsQuery } from '@/redux/features/brand/brandApi';
+import { useMemo } from 'react';
 import MobileFilters from './MobileFilters';
 
 interface ProductToolbarProps {
@@ -22,10 +24,17 @@ export default function ProductToolbar({ total }: ProductToolbarProps) {
     const searchParams = useSearchParams();
     const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
     const [isSortOpen, setIsSortOpen] = useState(false);
+    const [isBrandOpen, setIsBrandOpen] = useState(false);
     const sortRef = useRef<HTMLDivElement>(null);
+    const brandRef = useRef<HTMLDivElement>(null);
 
     const currentView = searchParams.get('view') || 'grid';
     const sortBy = searchParams.get('sortBy') || 'createdAt';
+    const activeBrand = searchParams.get('brand');
+
+    const { data: allBrands = [] } = useGetBrandsQuery();
+    const activeBrands = useMemo(() => allBrands.filter((b: any) => b.isActive), [allBrands]);
+    const currentBrand = activeBrands.find((b: any) => b._id === activeBrand);
 
     const currentSortLabel = SORT_OPTIONS.find(opt => opt.value === sortBy)?.label || 'New Arrivals';
 
@@ -33,6 +42,9 @@ export default function ProductToolbar({ total }: ProductToolbarProps) {
         const handleClickOutside = (event: MouseEvent) => {
             if (sortRef.current && !sortRef.current.contains(event.target as Node)) {
                 setIsSortOpen(false);
+            }
+            if (brandRef.current && !brandRef.current.contains(event.target as Node)) {
+                setIsBrandOpen(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -65,7 +77,59 @@ export default function ProductToolbar({ total }: ProductToolbarProps) {
                 </button>
             </div>
 
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4 md:gap-6">
+                {/* Brand Filter Dropdown - Desktop Only */}
+                {activeBrands.length > 0 && (
+                    <div className="relative hidden lg:block" ref={brandRef}>
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Brand</span>
+                            <button
+                                onClick={() => setIsBrandOpen(!isBrandOpen)}
+                                className="flex items-center gap-2 text-[13px] font-medium text-gray-900 hover:text-primary transition-colors py-1"
+                            >
+                                <span className="max-w-[120px] truncate">{currentBrand ? currentBrand.name : 'All Brands'}</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className={`w-3 h-3 transition-transform duration-300 ${isBrandOpen ? 'rotate-180' : ''}`}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        {isBrandOpen && (
+                            <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden z-[110] animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                                <div className="p-1.5 max-h-64 overflow-y-auto">
+                                    <button
+                                        onClick={() => {
+                                            updateParams('brand', '');
+                                            setIsBrandOpen(false);
+                                        }}
+                                        className={`w-full text-left px-4 py-2.5 rounded-lg text-[13px] font-medium transition-all ${!activeBrand
+                                            ? 'bg-gray-900 text-white shadow-sm'
+                                            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                                            }`}
+                                    >
+                                        All Brands
+                                    </button>
+                                    {activeBrands.map((brand: any) => (
+                                        <button
+                                            key={brand._id}
+                                            onClick={() => {
+                                                updateParams('brand', brand._id);
+                                                setIsBrandOpen(false);
+                                            }}
+                                            className={`w-full text-left px-4 py-2.5 rounded-lg text-[13px] font-medium transition-all ${activeBrand === brand._id
+                                                ? 'bg-gray-900 text-white shadow-sm'
+                                                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                                                }`}
+                                        >
+                                            {brand.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
                 {/* Sorting */}
                 <div className="relative" ref={sortRef}>
                     <div className="flex items-center gap-3">
