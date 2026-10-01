@@ -1,18 +1,17 @@
-import dbConnect from '@/lib/db';
-import Product from '@/models/Product';
-import '@/models/Brand';
-import VariantOption, { IVariantOptionDocument } from '@/models/VariantOption';
-import '@/models/Category';
-import Settings from '@/models/Settings';
-import ProductDetailInteractive from './ProductDetailInteractive';
 import RelatedProducts from '@/components/client/RelatedProducts';
-import ProductTabsSection from '@/components/client/product-detail/ProductTabsSection';
 import ProductMoreSidebar from '@/components/client/product-detail/ProductMoreSidebar';
-import CompatibleModelsSelector from '@/components/client/product-detail/CompatibleModelsSelector';
-import { notFound } from 'next/navigation';
-import Link from 'next/link';
+import ProductTabsSection from '@/components/client/product-detail/ProductTabsSection';
+import dbConnect from '@/lib/db';
+import '@/models/Brand';
+import '@/models/Category';
+import Product from '@/models/Product';
+import Settings from '@/models/Settings';
+import VariantOption, { IVariantOptionDocument } from '@/models/VariantOption';
 import { Metadata } from 'next';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
+import ProductDetailInteractive from './ProductDetailInteractive';
 
 async function getProductData(slug: string) {
     await dbConnect();
@@ -49,12 +48,12 @@ export async function generateMetadata({ params }: { params: any }): Promise<Met
         return { title: 'Product Not Found' };
     }
 
-    const brandName = data.settings?.brandName || data.settings?.siteName || 'BDGIRLS.XYZ';
+    const brandName = data.settings?.brandName || data.settings?.siteName || 'techstore.bd';
     const title = data.product.seoMetadata?.metaTitle || `${data.product.title} - ${brandName}`;
     const rawDescription = data.product.seoMetadata?.metaDescription || data.product.shortDescription || data.product.title || '';
     const description = typeof rawDescription === 'string' ? rawDescription.replace(/<[^>]*>?/gm, '').trim() : rawDescription;
     
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://bdgirls.xyz';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://techstore.bd';
     const imageUrl = data.product.images?.[0];
     const absoluteImageUrl = imageUrl 
         ? (imageUrl.startsWith('http') ? imageUrl : `${baseUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`)
@@ -104,8 +103,8 @@ export default async function ProductPage({ params }: { params: any }) {
     // We fetch all global attributes needed for the UI.
     const allAttributes = [...globalOptions.sizes, ...globalOptions.colors, ...globalOptions.materials];
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://bdgirls.xyz';
-    const brandName = settings?.brandName || settings?.siteName || 'BDGIRLS.XYZ';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://techstore.bd';
+    const brandName = settings?.brandName || settings?.siteName || 'techstore.bd';
 
     // Product JSON-LD structured data (schema.org/Product) — helps Google index product pages for rich results
     const productJsonLd = {

@@ -1,11 +1,11 @@
-import { MetadataRoute } from 'next';
 import dbConnect from '@/lib/db';
-import Product from '@/models/Product';
 import Blog from '@/models/Blog';
-import Category from '@/models/Category';
 import Brand from '@/models/Brand';
+import Category from '@/models/Category';
+import Product from '@/models/Product';
+import { MetadataRoute } from 'next';
 
-const BASE_URL = 'https://bdgirls.xyz';
+const BASE_URL = 'https://techstore.bd';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // ─── Static pages ──────────────────────────────────────────────────────────

@@ -1,11 +1,10 @@
 import dbConnect from '@/lib/db';
-import LandingPage from '@/models/LandingPage';
-import Product from '@/models/Product';
-import VariantOption, { IVariantOptionDocument } from '@/models/VariantOption';
-import Settings from '@/models/Settings';
 import '@/models/Category';
-import LandingPageClient from './LandingPageClient';
+import LandingPage from '@/models/LandingPage';
+import Settings from '@/models/Settings';
+import VariantOption, { IVariantOptionDocument } from '@/models/VariantOption';
 import { notFound } from 'next/navigation';
+import LandingPageClient from './LandingPageClient';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
@@ -22,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const product = landing.product as any;
     
     // Prioritize landing page banner, then product image, and ensure absolute URL for OpenGraph
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://bdgirls.xyz';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://techstore.bd';
     const imageUrl = landing.bannerImage || product?.images?.[0];
     const absoluteImageUrl = imageUrl 
         ? (imageUrl.startsWith('http') ? imageUrl : `${baseUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`)

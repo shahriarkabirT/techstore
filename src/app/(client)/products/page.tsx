@@ -1,18 +1,18 @@
 import ProductFilters from '@/components/client/ProductFilters';
 import ProductGrid from '@/components/client/ProductGrid';
-import Link from 'next/link';
 import ProductToolbar from '@/components/client/ProductToolbar';
 import dbConnect from '@/lib/db';
+import { getProductsList } from '@/lib/services/product.service';
 import Category from '@/models/Category';
 import Settings from '@/models/Settings';
-import { getProductsList } from '@/lib/services/product.service';
+import Link from 'next/link';
 
 export async function generateMetadata({ searchParams }: { searchParams: any }) {
     const params = await searchParams;
     
     await dbConnect();
     const settings = await Settings.findOne({}).lean() as any;
-    const brandName = settings?.brandName || settings?.siteName || 'BDGIRLS.XYZ';
+    const brandName = settings?.brandName || settings?.siteName || 'techstore.bd';
     
     let title = `Explore Our Collection | ${brandName}`;
     let description = `Shop the best gadgets & tech accessories in Bangladesh — ${brandName}. iPhone cases, Samsung covers, smart watches, earbuds & more.`;
@@ -32,7 +32,7 @@ export async function generateMetadata({ searchParams }: { searchParams: any }) 
         }
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://bdgirls.xyz';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://techstore.bd';
     const canonicalUrl = params?.category ? `${baseUrl}/products?category=${params.category}` : `${baseUrl}/products`;
 
     return {
