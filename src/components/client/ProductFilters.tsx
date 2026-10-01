@@ -63,6 +63,15 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
     const activeCategory = searchParams.get('category');
     const activeBrand = searchParams.get('brand');
 
+    // Optimistic UI States
+    const [optimisticCategory, setOptimisticCategory] = useState<string | null>(activeCategory);
+    const [optimisticBrand, setOptimisticBrand] = useState<string | null>(activeBrand);
+
+    useEffect(() => {
+        setOptimisticCategory(searchParams.get('category'));
+        setOptimisticBrand(searchParams.get('brand'));
+    }, [searchParams]);
+
     const activeFilters = useMemo(() => {
         const filters = [];
         if (searchParams.get('minPrice') || searchParams.get('maxPrice')) {
@@ -141,8 +150,10 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
         const params = new URLSearchParams(searchParams.toString());
         if (activeCategory === slug) {
             params.delete('category');
+            setOptimisticCategory(null);
         } else {
             params.set('category', slug);
+            setOptimisticCategory(slug);
         }
         params.set('page', '1');
         router.push(`/products?${params.toString()}`, { scroll: false });
@@ -170,7 +181,7 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
 
                     const children = cat.subCategories || cat.childCategories || cat.subChildCategories || [];
                     const isExpanded = expandedCategories[cat._id];
-                    const isActive = activeCategory === cat.slug;
+                    const isActive = optimisticCategory === cat.slug;
 
                     return (
                         <div key={cat._id} className="space-y-1">
@@ -321,7 +332,7 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
                     {openSections.brands && (
                         <div className="space-y-1 max-h-[220px] overflow-y-auto pr-1 brand-scrollbar">
                             {activeBrands.map((brand: any) => {
-                                const isActive = activeBrand === brand._id;
+                                const isActive = optimisticBrand === brand._id;
                                 return (
                                     <button
                                         key={brand._id}
@@ -329,8 +340,10 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
                                             const params = new URLSearchParams(searchParams.toString());
                                             if (isActive) {
                                                 params.delete('brand');
+                                                setOptimisticBrand(null);
                                             } else {
                                                 params.set('brand', brand._id);
+                                                setOptimisticBrand(brand._id);
                                             }
                                             params.set('page', '1');
                                             router.push(`/products?${params.toString()}`, { scroll: false });

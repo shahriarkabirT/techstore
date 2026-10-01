@@ -30,11 +30,15 @@ export default function ProductToolbar({ total }: ProductToolbarProps) {
 
     const currentView = searchParams.get('view') || 'grid';
     const sortBy = searchParams.get('sortBy') || 'createdAt';
-    const activeBrand = searchParams.get('brand');
+    const [optimisticBrand, setOptimisticBrand] = useState<string | null>(searchParams.get('brand'));
+
+    useEffect(() => {
+        setOptimisticBrand(searchParams.get('brand'));
+    }, [searchParams]);
 
     const { data: allBrands = [] } = useGetBrandsQuery();
     const activeBrands = useMemo(() => allBrands.filter((b: any) => b.isActive), [allBrands]);
-    const currentBrand = activeBrands.find((b: any) => b._id === activeBrand);
+    const currentBrand = activeBrands.find((b: any) => b._id === optimisticBrand);
 
     const currentSortLabel = SORT_OPTIONS.find(opt => opt.value === sortBy)?.label || 'New Arrivals';
 
@@ -100,9 +104,10 @@ export default function ProductToolbar({ total }: ProductToolbarProps) {
                                     <button
                                         onClick={() => {
                                             updateParams('brand', '');
+                                            setOptimisticBrand(null);
                                             setIsBrandOpen(false);
                                         }}
-                                        className={`w-full text-left px-4 py-2.5 rounded-lg text-[13px] font-medium transition-all ${!activeBrand
+                                        className={`w-full text-left px-4 py-2.5 rounded-lg text-[13px] font-medium transition-all ${!optimisticBrand
                                             ? 'bg-gray-900 text-white shadow-sm'
                                             : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
                                             }`}
@@ -114,9 +119,10 @@ export default function ProductToolbar({ total }: ProductToolbarProps) {
                                             key={brand._id}
                                             onClick={() => {
                                                 updateParams('brand', brand._id);
+                                                setOptimisticBrand(brand._id);
                                                 setIsBrandOpen(false);
                                             }}
-                                            className={`w-full text-left px-4 py-2.5 rounded-lg text-[13px] font-medium transition-all ${activeBrand === brand._id
+                                            className={`w-full text-left px-4 py-2.5 rounded-lg text-[13px] font-medium transition-all ${optimisticBrand === brand._id
                                                 ? 'bg-gray-900 text-white shadow-sm'
                                                 : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
                                                 }`}
