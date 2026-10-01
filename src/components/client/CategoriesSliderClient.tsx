@@ -35,7 +35,7 @@ export default function CategoriesSliderClient({ categories }: { categories: Cat
                         href={`/products?category=${category.slug}`}
                         className="group flex flex-col items-center gap-3"
                     >
-                        <div className="relative w-full aspect-[4/3] sm:aspect-square bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 transition-all duration-300 group-hover:border-primary/20 group-hover:shadow-lg group-hover:-translate-y-1">
+                        <div className="relative w-full aspect-[4/3] sm:aspect-square bg-gray-50 rounded-lg overflow-hidden border border-gray-100 transition-all duration-300 group-hover:border-primary/20 group-hover:shadow-lg group-hover:-translate-y-1">
                             <Image
                                 src={category.bannerImage}
                                 alt={category.name}

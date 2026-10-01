@@ -45,8 +45,7 @@ export default function ImageUpload({
         return () => window.removeEventListener('keydown', handleEscape);
     }, [previewImage]);
 
-    const handleFileSelect = async (e: ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(e.target.files || []);
+    const uploadFiles = async (files: File[]) => {
         if (files.length === 0) return;
 
         if (images.length + files.length > maxImages) {
@@ -90,6 +89,37 @@ export default function ImageUpload({
         } finally {
             setUploading(false);
             if (fileInputRef.current) fileInputRef.current.value = "";
+        }
+    };
+
+    const handleFileSelect = async (e: ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files || []);
+        await uploadFiles(files);
+    };
+
+    const [isDragging, setIsDragging] = useState(false);
+
+    const handleDragOver = (e: React.DragEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = (e: React.DragEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+    };
+
+    const handleDrop = async (e: React.DragEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+        const files = Array.from(e.dataTransfer.files || []);
+        // filter out non-images
+        const imageFiles = files.filter(f => f.type.startsWith('image/'));
+        if (imageFiles.length > 0) {
+            await uploadFiles(imageFiles);
         }
     };
 
@@ -153,8 +183,11 @@ export default function ImageUpload({
                     <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
                         disabled={uploading}
-                        className={`${(aspectRatio === "3:1" || aspectRatio === "4:3") ? "w-full aspect-[4/1]" : "aspect-square"} border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center gap-1 hover:border-gray-900 hover:bg-gray-50 transition-all text-gray-400 hover:text-gray-900`}
+                        className={`${(aspectRatio === "3:1" || aspectRatio === "4:3") ? "w-full aspect-[4/1]" : "aspect-square"} border-2 border-dashed ${isDragging ? "border-indigo-500 bg-indigo-50 text-indigo-600" : "border-gray-200 bg-white text-gray-400"} rounded-lg flex flex-col items-center justify-center gap-1 hover:border-gray-900 hover:bg-gray-50 transition-all hover:text-gray-900`}
                     >
                         <input
                             ref={fileInputRef}
@@ -173,7 +206,9 @@ export default function ImageUpload({
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                 </svg>
-                                <span className="text-[9px] font-semibold uppercase tracking-tighter">New Image</span>
+                                <span className="text-[9px] font-semibold uppercase tracking-tighter">
+                                    {isDragging ? "Drop here" : "New Image"}
+                                </span>
                             </>
                         )}
                     </button>
@@ -199,7 +234,7 @@ export default function ImageUpload({
                     </button>
                     
                     <div 
-                        className="relative w-full max-w-4xl h-[80vh] rounded-lg overflow-hidden flex items-center justify-center"
+                        className="relative w-full max-w-xl h-[60vh] rounded-lg overflow-hidden flex items-center justify-center"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* We use WatermarkedImage here so they can preview the watermark and download it! */}
