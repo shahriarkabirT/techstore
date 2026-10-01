@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useGetCategoryTreeQuery } from '@/redux/features/categories/categoryApi';
 import { useGetBrandsQuery } from '@/redux/features/brand/brandApi';
 import { useGetAttributesQuery } from '@/redux/features/attribute/attributeApi';
@@ -11,12 +11,39 @@ interface ProductFiltersProps {
     onClose?: () => void;
 }
 
+function OptimisticCheckbox({ 
+    checked, 
+    onChange 
+}: { 
+    checked: boolean; 
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void 
+}) {
+    const [localChecked, setLocalChecked] = useState(checked);
+    
+    // Sync when props change
+    useEffect(() => {
+        setLocalChecked(checked);
+    }, [checked]);
+
+    return (
+        <input
+            type="checkbox"
+            checked={localChecked}
+            onChange={(e) => {
+                setLocalChecked(e.target.checked);
+                onChange(e);
+            }}
+            className="peer appearance-none w-4 h-4 border border-gray-200 rounded checked:bg-gray-900 checked:border-gray-900 transition-all cursor-pointer"
+        />
+    );
+}
+
 export default function ProductFilters({ onClose }: ProductFiltersProps) {
     const { data: categoryTree = [], isLoading: isCategoriesLoading } = useGetCategoryTreeQuery();
     const { data: allBrands = [] } = useGetBrandsQuery();
     const { data: attributesData } = useGetAttributesQuery();
-    const activeBrands = allBrands.filter((b: any) => b.isActive);
-    const filterableAttributes = attributesData?.attributes?.filter(a => a.isActive && a.isFilterable) || [];
+    const activeBrands = useMemo(() => allBrands.filter((b: any) => b.isActive), [allBrands]);
+    const filterableAttributes = useMemo(() => attributesData?.attributes?.filter((a: any) => a.isActive && a.isFilterable) || [], [attributesData?.attributes]);
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -358,8 +385,7 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
                                     return (
                                         <label key={val._id} className="flex items-center gap-2.5 group cursor-pointer">
                                             <div className="relative flex items-center">
-                                                <input
-                                                    type="checkbox"
+                                                <OptimisticCheckbox
                                                     checked={isActive}
                                                     onChange={(e) => {
                                                         const params = new URLSearchParams(searchParams.toString());
@@ -378,7 +404,6 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
                                                         params.set('page', '1');
                                                         router.push(`/products?${params.toString()}`, { scroll: false });
                                                     }}
-                                                    className="peer appearance-none w-4 h-4 border border-gray-200 rounded checked:bg-gray-900 checked:border-gray-900 transition-all cursor-pointer"
                                                 />
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={4} stroke="white" className="absolute w-2.5 h-2.5 left-0.5 top-0.5 invisible peer-checked:visible pointer-events-none">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
@@ -411,8 +436,7 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
                 {openSections.availability && (
                     <label className="flex items-center gap-2.5 group cursor-pointer">
                         <div className="relative flex items-center">
-                            <input
-                                type="checkbox"
+                            <OptimisticCheckbox
                                 checked={inStock}
                                 onChange={(e) => {
                                     setInStock(e.target.checked);
@@ -420,7 +444,6 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
                                     if (e.target.checked) params.set('inStock', 'true'); else params.delete('inStock');
                                     router.push(`/products?${params.toString()}`, { scroll: false });
                                 }}
-                                className="peer appearance-none w-4 h-4 border border-gray-200 rounded checked:bg-gray-900 checked:border-gray-900 transition-all cursor-pointer"
                             />
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={4} stroke="white" className="absolute w-2.5 h-2.5 left-0.5 top-0.5 invisible peer-checked:visible pointer-events-none">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />

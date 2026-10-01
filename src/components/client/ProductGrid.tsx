@@ -80,7 +80,8 @@ export default function ProductGrid({ initialData }: { initialData?: any }) {
     const pagination = response?.pagination || initialData?.pagination || { total: 0, pages: 1, page: 1 };
     
     // Only show full-page skeleton if we don't have a response AND we don't have initial SSR data
-    const shouldShowSkeleton = isLoading && page === 1 && !initialData;
+    // Or if we are fetching page 1 (which means filters changed)
+    const shouldShowSkeleton = (isLoading && page === 1 && !initialData) || (isFetching && page === 1);
 
     // Intersection Observer for the last element
     const observer = useRef<IntersectionObserver | null>(null);
