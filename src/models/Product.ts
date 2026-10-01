@@ -212,6 +212,8 @@ ProductSchema.index({ isActive: 1 });
 ProductSchema.index({ price: 1 });
 ProductSchema.index({ brand: 1 });
 ProductSchema.index({ isFeatured: 1 });
+// Wildcard index for dynamic attribute filtering (improves performance for variants.attributes.[slug] queries)
+ProductSchema.index({ 'variants.attributes.$**': 1 });
 ProductSchema.set('toJSON', { virtuals: true, flattenMaps: true });
 ProductSchema.set('toObject', { virtuals: true, flattenMaps: true });
 

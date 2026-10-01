@@ -58,7 +58,7 @@ export async function PUT(
 
         const { id } = await params;
         const body = await request.json();
-        const { name, type, order } = body;
+        const { name, type, order, isFilterable } = body;
 
         await dbConnect();
 
@@ -79,6 +79,9 @@ export async function PUT(
         }
         if (order !== undefined) {
             attribute.order = order;
+        }
+        if (isFilterable !== undefined) {
+            attribute.isFilterable = isFilterable;
         }
 
         await attribute.save();

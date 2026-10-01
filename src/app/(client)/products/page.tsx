@@ -70,12 +70,21 @@ export default async function ProductsPage({ searchParams }: { searchParams: any
         minPrice: params.minPrice || null,
         maxPrice: params.maxPrice || null,
         brand: params.brand || null,
-        // active: 'true' is implied by public page, but let's be explicit
         active: 'true',
-        // In-stock filtering via RTK Query typically happens locally or via specific param, but the service doesn't have an `inStock` param yet.
-        // Wait, the API route didn't have `inStock` filtering, it was missing! We'll just pass it down and let the client handle it if it does, but we should probably add `inStock` to product.service.ts if it was supported.
-        // Actually, the API route didn't have it, but RTK query did. We'll leave it as is.
+        inStock: params.inStock || null,
     };
+
+    const attributes: Record<string, string[]> = {};
+    for (const key of Object.keys(params)) {
+        if (key.startsWith('attr_') && params[key]) {
+            const slug = key.replace('attr_', '');
+            attributes[slug] = typeof params[key] === 'string' ? params[key].split(',') : Array.isArray(params[key]) ? params[key] : [];
+        }
+    }
+    
+    if (Object.keys(attributes).length > 0) {
+        (queryParams as any).attributes = attributes;
+    }
 
     const initialData = await getProductsList(queryParams);
 

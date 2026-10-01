@@ -4,6 +4,7 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useState, useMemo } from 'react';
 import { useGetCategoryTreeQuery } from '@/redux/features/categories/categoryApi';
 import { useGetBrandsQuery } from '@/redux/features/brand/brandApi';
+import { useGetAttributesQuery } from '@/redux/features/attribute/attributeApi';
 import Image from 'next/image';
 
 interface ProductFiltersProps {
@@ -13,7 +14,9 @@ interface ProductFiltersProps {
 export default function ProductFilters({ onClose }: ProductFiltersProps) {
     const { data: categoryTree = [], isLoading: isCategoriesLoading } = useGetCategoryTreeQuery();
     const { data: allBrands = [] } = useGetBrandsQuery();
+    const { data: attributesData } = useGetAttributesQuery();
     const activeBrands = allBrands.filter((b: any) => b.isActive);
+    const filterableAttributes = attributesData?.attributes?.filter(a => a.isActive && a.isFilterable) || [];
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -45,8 +48,52 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
             const brand = activeBrands.find((b: any) => b._id === searchParams.get('brand'));
             if (brand) filters.push({ key: 'brand', label: brand.name });
         }
+        
+        filterableAttributes.forEach(attr => {
+            const valIds = searchParams.get(`attr_${attr.slug}`);
+            if (valIds) {
+                const idArray = valIds.split(',');
+                idArray.forEach(id => {
+                    const val = attr.values?.find(v => v._id === id);
+                    if (val) {
+                        filters.push({ key: `attr_${attr.slug}_${id}`, label: `${attr.name}: ${val.label}` });
+                    }
+                });
+            }
+        });
         return filters;
-    }, [searchParams, activeBrands]);
+    }, [searchParams, activeBrands, filterableAttributes]);
+
+    const removeFilter = (key: string) => {
+        const params = new URLSearchParams(searchParams.toString());
+        if (key === 'category') {
+            params.delete('category');
+        } else if (key === 'price') {
+            params.delete('minPrice');
+            params.delete('maxPrice');
+            setMinPrice('');
+            setMaxPrice('');
+        } else if (key === 'inStock') {
+            params.delete('inStock');
+            setInStock(false);
+        } else if (key === 'brand') {
+            params.delete('brand');
+        } else if (key.startsWith('attr_')) {
+            // key is `attr_${attr.slug}_${id}`
+            const parts = key.split('_');
+            const id = parts.pop();
+            const attrKey = parts.join('_'); // 'attr_slug'
+            const currentIds = (params.get(attrKey) || '').split(',').filter(Boolean);
+            const newIds = currentIds.filter(i => i !== id);
+            if (newIds.length > 0) {
+                params.set(attrKey, newIds.join(','));
+            } else {
+                params.delete(attrKey);
+            }
+        }
+        params.set('page', '1');
+        router.push(`/products?${params.toString()}`, { scroll: false });
+    };
 
     const updateFilters = () => {
         const params = new URLSearchParams(searchParams.toString());
@@ -150,6 +197,11 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
                                 className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white border border-gray-200 rounded-md text-xs font-medium text-gray-700 shadow-sm"
                             >
                                 {filter.label}
+                                <button onClick={() => removeFilter(filter.key)} className="hover:text-gray-900 text-gray-500 ml-0.5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3 h-3">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
                             </div>
                         ))}
                     </div>
@@ -283,6 +335,67 @@ export default function ProductFilters({ onClose }: ProductFiltersProps) {
                     )}
                 </div>
             )}
+
+            {/* Dynamic Attributes */}
+            {filterableAttributes.map(attr => {
+                const activeValIds = (searchParams.get(`attr_${attr.slug}`) || '').split(',').filter(Boolean);
+                
+                return (
+                    <div key={attr._id} className="border-b border-gray-50 pb-6">
+                        <button
+                            onClick={() => toggleSection(`attr_${attr.slug}`)}
+                            className="flex items-center justify-between w-full text-xs font-semibold text-gray-900 mb-4 group cursor-pointer"
+                        >
+                            {attr.name}
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className={`w-3 h-3 transition-transform duration-300 ${openSections[`attr_${attr.slug}`] !== false ? 'rotate-180' : ''} text-gray-300 group-hover:text-gray-900`}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                            </svg>
+                        </button>
+                        {openSections[`attr_${attr.slug}`] !== false && (
+                            <div className="space-y-3 max-h-[220px] overflow-y-auto pr-1 brand-scrollbar">
+                                {attr.values?.filter(v => v.isActive).map(val => {
+                                    const isActive = activeValIds.includes(val._id);
+                                    return (
+                                        <label key={val._id} className="flex items-center gap-2.5 group cursor-pointer">
+                                            <div className="relative flex items-center">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={isActive}
+                                                    onChange={(e) => {
+                                                        const params = new URLSearchParams(searchParams.toString());
+                                                        let newIds = [...activeValIds];
+                                                        if (e.target.checked) {
+                                                            newIds.push(val._id);
+                                                        } else {
+                                                            newIds = newIds.filter(id => id !== val._id);
+                                                        }
+                                                        
+                                                        if (newIds.length > 0) {
+                                                            params.set(`attr_${attr.slug}`, newIds.join(','));
+                                                        } else {
+                                                            params.delete(`attr_${attr.slug}`);
+                                                        }
+                                                        params.set('page', '1');
+                                                        router.push(`/products?${params.toString()}`, { scroll: false });
+                                                    }}
+                                                    className="peer appearance-none w-4 h-4 border border-gray-200 rounded checked:bg-gray-900 checked:border-gray-900 transition-all cursor-pointer"
+                                                />
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={4} stroke="white" className="absolute w-2.5 h-2.5 left-0.5 top-0.5 invisible peer-checked:visible pointer-events-none">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                                </svg>
+                                            </div>
+                                            {attr.type === 'color' && val.colorCode && (
+                                                <div className="w-4 h-4 rounded-full border border-gray-200" style={{ backgroundColor: val.colorCode }} />
+                                            )}
+                                            <span className="text-xs font-medium text-gray-600 group-hover:text-gray-900 transition-colors">{val.label}</span>
+                                        </label>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+                );
+            })}
 
             {/* Availability */}
             <div className="pb-6">

@@ -29,7 +29,8 @@ export default function AttributeManagementPage() {
     const [newAttrName, setNewAttrName] = useState('');
     const [newAttrType, setNewAttrType] = useState<'text' | 'color'>('text');
     const [newAttrOrder, setNewAttrOrder] = useState('0');
-    const [editingAttr, setEditingAttr] = useState<{ id: string; name: string; type: 'text' | 'color'; order: number } | null>(null);
+    const [newAttrIsFilterable, setNewAttrIsFilterable] = useState(false);
+    const [editingAttr, setEditingAttr] = useState<{ id: string; name: string; type: 'text' | 'color'; order: number; isFilterable?: boolean } | null>(null);
     const [isMovingAttr, setIsMovingAttr] = useState(false);
 
     // Value State
@@ -55,11 +56,13 @@ export default function AttributeManagementPage() {
                 name: newAttrName.trim(),
                 type: newAttrType,
                 order: Number(newAttrOrder),
+                isFilterable: newAttrIsFilterable,
             }).unwrap();
             showSuccess('Created', `Attribute "${newAttrName.trim()}" added`);
             setNewAttrName('');
             setNewAttrType('text');
             setNewAttrOrder('0');
+            setNewAttrIsFilterable(false);
             setSelectedAttributeId(res.attribute._id);
         } catch (err: any) {
             showError(err.data?.message || 'Failed to create attribute');
@@ -79,6 +82,7 @@ export default function AttributeManagementPage() {
                     name: editingAttr.name.trim(),
                     type: editingAttr.type,
                     order: editingAttr.order,
+                    isFilterable: editingAttr.isFilterable,
                 },
             }).unwrap();
             showSuccess('Updated', 'Attribute saved');
@@ -114,7 +118,7 @@ export default function AttributeManagementPage() {
                 if (a.order !== i) {
                     return updateAttribute({
                         id: a._id,
-                        body: { name: a.name, type: a.type, order: i },
+                        body: { name: a.name, type: a.type, order: i, isFilterable: a.isFilterable },
                     }).unwrap();
                 }
                 return null;
@@ -286,6 +290,18 @@ export default function AttributeManagementPage() {
                                     />
                                 </div>
                             </div>
+                            <div className="flex items-center gap-2 mb-3">
+                                <input
+                                    type="checkbox"
+                                    id="newAttrIsFilterable"
+                                    checked={newAttrIsFilterable}
+                                    onChange={(e) => setNewAttrIsFilterable(e.target.checked)}
+                                    className="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-900"
+                                />
+                                <label htmlFor="newAttrIsFilterable" className="text-sm font-medium text-gray-700">
+                                    Show as filter in shop sidebar
+                                </label>
+                            </div>
                             <button
                                 onClick={handleCreateAttr}
                                 disabled={isCreatingAttr || !newAttrName.trim()}
@@ -341,6 +357,16 @@ export default function AttributeManagementPage() {
                                                         onClick={(e) => e.stopPropagation()}
                                                     />
                                                 </div>
+                                                <div className="flex items-center gap-2 mt-2">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={editingAttr.isFilterable || false}
+                                                        onChange={(e) => setEditingAttr({ ...editingAttr, isFilterable: e.target.checked })}
+                                                        className="w-3.5 h-3.5 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    />
+                                                    <span className="text-xs font-medium text-gray-600">Filterable</span>
+                                                </div>
                                                 <div className="flex gap-2 pt-1">
                                                     <button
                                                         onClick={(e) => { e.stopPropagation(); handleUpdateAttr(); }}
@@ -364,7 +390,7 @@ export default function AttributeManagementPage() {
                                                         {attr.name}
                                                     </p>
                                                     <p className="text-[10px] text-gray-500 uppercase">
-                                                        {attr.type} • Order: {attr.order} • {attr.values?.length || 0} values
+                                                        {attr.type} • Order: {attr.order} • {attr.values?.length || 0} values {attr.isFilterable && '• Filterable'}
                                                     </p>
                                                 </div>
                                                 <div className="flex items-center gap-1 shrink-0 ml-2">
@@ -383,7 +409,7 @@ export default function AttributeManagementPage() {
                                                         ↓
                                                     </button>
                                                     <button
-                                                        onClick={(e) => { e.stopPropagation(); setEditingAttr({ id: attr._id, name: attr.name, type: attr.type, order: attr.order }); }}
+                                                        onClick={(e) => { e.stopPropagation(); setEditingAttr({ id: attr._id, name: attr.name, type: attr.type, order: attr.order, isFilterable: attr.isFilterable }); }}
                                                         className="p-1 text-gray-400 hover:text-blue-600"
                                                     >
                                                         ✎

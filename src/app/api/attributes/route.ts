@@ -52,7 +52,7 @@ export async function POST(request: Request) {
         }
 
         const body = await request.json();
-        const { name, type, order } = body;
+        const { name, type, order, isFilterable } = body;
 
         if (!name || !name.trim()) {
             return NextResponse.json(
@@ -77,6 +77,7 @@ export async function POST(request: Request) {
             slug,
             type: type || 'text',
             order: order || 0,
+            isFilterable: isFilterable || false,
         });
 
         return NextResponse.json({

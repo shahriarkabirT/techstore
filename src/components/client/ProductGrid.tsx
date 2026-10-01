@@ -22,12 +22,22 @@ export default function ProductGrid({ initialData }: { initialData?: any }) {
     const sortOrder = order === 'asc' ? 'asc' : 'desc';
     const viewMode = searchParams.get('view') || 'grid';
 
+    // Extract dynamic attributes
+    const attributes: Record<string, string> = {};
+    let attrKeyStr = '';
+    searchParams.forEach((value, key) => {
+        if (key.startsWith('attr_') && value) {
+            attributes[key] = value;
+            attrKeyStr += `${key}=${value}&`;
+        }
+    });
+
     // Infinite scrolling state
     const [page, setPage] = useState(1);
     const [accumulatedProducts, setAccumulatedProducts] = useState<any[]>([]);
 
     // Reset pagination and list when filters change
-    const filterKey = `${category}-${search}-${sortByParam}-${minPrice}-${maxPrice}-${inStock}-${brand}`;
+    const filterKey = `${category}-${search}-${sortByParam}-${minPrice}-${maxPrice}-${inStock}-${brand}-${attrKeyStr}`;
     const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
     
     if (filterKey !== prevFilterKey) {
@@ -47,6 +57,7 @@ export default function ProductGrid({ initialData }: { initialData?: any }) {
         maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
         inStock,
         brand,
+        ...attributes,
     });
 
     const [prevProducts, setPrevProducts] = useState<any[] | null>(null);

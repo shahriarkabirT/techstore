@@ -6,6 +6,7 @@ export interface IAttributeDocument extends Document {
     type: 'text' | 'color';
     order: number;
     isActive: boolean;
+    isFilterable: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -38,6 +39,10 @@ const AttributeSchema = new Schema<IAttributeDocument>(
         isActive: {
             type: Boolean,
             default: true,
+        },
+        isFilterable: {
+            type: Boolean,
+            default: false,
         },
     },
     {

@@ -5,6 +5,8 @@ import SubCategory from '@/models/SubCategory';
 import ChildCategory from '@/models/ChildCategory';
 import SubChildCategory from '@/models/SubChildCategory';
 import '@/models/Brand';
+import Attribute from '@/models/Attribute';
+import AttributeValue from '@/models/AttributeValue';
 
 export async function getProductsList(params: {
     category?: string | null;
@@ -19,6 +21,8 @@ export async function getProductsList(params: {
     minPrice?: string | null;
     maxPrice?: string | null;
     brand?: string | null;
+    inStock?: boolean | string | null;
+    attributes?: Record<string, string[]>;
 }) {
     await dbConnect();
 
@@ -34,7 +38,9 @@ export async function getProductsList(params: {
         featured,
         minPrice,
         maxPrice,
-        brand
+        brand,
+        inStock,
+        attributes
     } = params;
 
     const activeOnly = activeQuery !== 'false' && activeQuery !== 'all';
@@ -54,6 +60,10 @@ export async function getProductsList(params: {
         query.isFeatured = true;
     } else if (featured === 'false') {
         query.isFeatured = false;
+    }
+
+    if (inStock === 'true' || inStock === true) {
+        query.stock = { $gt: 0 };
     }
 
     if (category) {
@@ -161,6 +171,33 @@ export async function getProductsList(params: {
         query.price = {};
         if (minPrice) (query.price as any).$gte = Number(minPrice);
         if (maxPrice) (query.price as any).$lte = Number(maxPrice);
+    }
+
+    if (attributes && Object.keys(attributes).length > 0) {
+        const variantMatch: any = {};
+        let hasAttrFilters = false;
+        for (const [slug, ids] of Object.entries(attributes)) {
+            const attr = await Attribute.findOne({ slug });
+            if (attr) {
+                const attributeValues = await AttributeValue.find({
+                    _id: { $in: ids },
+                    attributeId: attr._id
+                });
+                const labels = attributeValues.map(v => v.label);
+
+                if (labels.length > 0) {
+                    variantMatch[`attributes.${slug}`] = { $in: labels };
+                    hasAttrFilters = true;
+                }
+            }
+        }
+        
+        if (hasAttrFilters) {
+            if (inStock === 'true' || inStock === true) {
+                variantMatch.stock = { $gt: 0 };
+            }
+            query.variants = { $elemMatch: variantMatch };
+        }
     }
 
     const skip = (page - 1) * limit;

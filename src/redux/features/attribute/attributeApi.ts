@@ -14,7 +14,7 @@ export const attributeApi = apiSlice.injectEndpoints({
         }),
         createAttribute: builder.mutation<
             { success: boolean; attribute: IAttribute },
-            { name: string; type?: 'text' | 'color'; order?: number }
+            { name: string; type?: 'text' | 'color'; order?: number; isFilterable?: boolean }
         >({
             query: (body) => ({
                 url: '/attributes',
@@ -25,7 +25,7 @@ export const attributeApi = apiSlice.injectEndpoints({
         }),
         updateAttribute: builder.mutation<
             { success: boolean; attribute: IAttribute },
-            { id: string; body: { name?: string; type?: 'text' | 'color'; order?: number } }
+            { id: string; body: { name?: string; type?: 'text' | 'color'; order?: number; isFilterable?: boolean } }
         >({
             query: ({ id, body }) => ({
                 url: `/attributes/${id}`,

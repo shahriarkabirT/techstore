@@ -41,6 +41,7 @@ export interface IAttribute {
     type: 'text' | 'color';
     order: number;
     isActive: boolean;
+    isFilterable?: boolean;
     values?: IAttributeValue[];
     createdAt: Date;
     updatedAt: Date;

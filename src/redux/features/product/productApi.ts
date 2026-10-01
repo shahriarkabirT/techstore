@@ -18,6 +18,7 @@ export const productApi = apiSlice.injectEndpoints({
             maxPrice?: number;
             inStock?: boolean;
             brand?: string;
+            [key: string]: any;
         }>({
 
             query: (params) => ({

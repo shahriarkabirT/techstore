@@ -55,7 +55,19 @@ export async function GET(request: NextRequest) {
             minPrice: searchParams.get('minPrice'),
             maxPrice: searchParams.get('maxPrice'),
             brand: searchParams.get('brand'),
+            inStock: searchParams.get('inStock'),
         };
+
+        const attributes: Record<string, string[]> = {};
+        for (const [key, value] of searchParams.entries()) {
+            if (key.startsWith('attr_') && value) {
+                const slug = key.replace('attr_', '');
+                attributes[slug] = value.split(',');
+            }
+        }
+        if (Object.keys(attributes).length > 0) {
+            (params as any).attributes = attributes;
+        }
 
         const result = await getProductsList(params);
 
