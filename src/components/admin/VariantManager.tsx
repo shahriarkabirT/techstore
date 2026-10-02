@@ -275,11 +275,8 @@ export default function VariantManager({
                 const price = Number(value) || 0;
                 const mrp = Number(variant.mrp) || 0;
                 if (mrp > 0) {
-                    if (variant.discountType === 'percentage') {
-                        variant.discountValue = Number((((mrp - price) / mrp) * 100).toFixed(2));
-                    } else {
-                        variant.discountValue = Number((mrp - price).toFixed(2));
-                    }
+                    variant.discountType = 'flat';
+                    variant.discountValue = Number((mrp - price).toFixed(2));
                 }
             } else if (field === 'discountValue' || field === 'discountType') {
                 const mrp = Number(variant.mrp) || 0;

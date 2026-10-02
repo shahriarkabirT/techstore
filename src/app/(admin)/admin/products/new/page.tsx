@@ -76,11 +76,8 @@ export default function NewProductPage() {
                 const price = Number(value) || 0;
                 const mrp = Number(next.mrp) || 0;
                 if (mrp > 0) {
-                    if (next.discountType === 'percentage') {
-                        next.discountValue = (((mrp - price) / mrp) * 100).toFixed(2);
-                    } else {
-                        next.discountValue = (mrp - price).toString();
-                    }
+                    next.discountType = 'flat';
+                    next.discountValue = (mrp - price).toString();
                 }
             } else if (name === 'discountValue' || name === 'discountType') {
                 const mrp = Number(next.mrp) || 0;

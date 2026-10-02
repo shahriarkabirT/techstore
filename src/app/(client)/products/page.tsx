@@ -4,8 +4,57 @@ import ProductToolbar from '@/components/client/ProductToolbar';
 import dbConnect from '@/lib/db';
 import { getProductsList } from '@/lib/services/product.service';
 import Category from '@/models/Category';
+import SubCategory from '@/models/SubCategory';
+import ChildCategory from '@/models/ChildCategory';
+import SubChildCategory from '@/models/SubChildCategory';
 import Settings from '@/models/Settings';
 import Link from 'next/link';
+
+async function getCategoryBreadcrumb(slug: string) {
+    try {
+        let target = await Category.findOne({ slug }).lean() as any;
+        if (target) return [{ name: target.name, slug: target.slug }];
+
+        target = await SubCategory.findOne({ slug }).populate('categoryId').lean() as any;
+        if (target && target.categoryId) {
+            return [
+                { name: target.categoryId.name, slug: target.categoryId.slug },
+                { name: target.name, slug: target.slug }
+            ];
+        }
+
+        target = await ChildCategory.findOne({ slug }).populate({
+            path: 'subCategoryId',
+            populate: { path: 'categoryId' }
+        }).lean() as any;
+        if (target && target.subCategoryId && target.subCategoryId.categoryId) {
+            return [
+                { name: target.subCategoryId.categoryId.name, slug: target.subCategoryId.categoryId.slug },
+                { name: target.subCategoryId.name, slug: target.subCategoryId.slug },
+                { name: target.name, slug: target.slug }
+            ];
+        }
+
+        target = await SubChildCategory.findOne({ slug }).populate({
+            path: 'childCategoryId',
+            populate: {
+                path: 'subCategoryId',
+                populate: { path: 'categoryId' }
+            }
+        }).lean() as any;
+        if (target && target.childCategoryId && target.childCategoryId.subCategoryId && target.childCategoryId.subCategoryId.categoryId) {
+            return [
+                { name: target.childCategoryId.subCategoryId.categoryId.name, slug: target.childCategoryId.subCategoryId.categoryId.slug },
+                { name: target.childCategoryId.subCategoryId.name, slug: target.childCategoryId.subCategoryId.slug },
+                { name: target.childCategoryId.name, slug: target.childCategoryId.slug },
+                { name: target.name, slug: target.slug }
+            ];
+        }
+    } catch (e) {
+        console.error("Error getting breadcrumb:", e);
+    }
+    return null;
+}
 
 export async function generateMetadata({ searchParams }: { searchParams: any }) {
     const params = await searchParams;
@@ -87,6 +136,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: any
     }
 
     const initialData = await getProductsList(queryParams);
+    const breadcrumbs = params.category ? await getCategoryBreadcrumb(params.category) : null;
 
     return (
         <div className="bg-background">
@@ -95,16 +145,37 @@ export default async function ProductsPage({ searchParams }: { searchParams: any
                 <div className="container mx-auto py-2.5 sm:py-3.5">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
-                            <nav className="flex text-xs font-semibold text-gray-400">
+                            <nav className="flex flex-wrap items-center text-xs font-semibold text-gray-400 gap-y-1">
                                 <Link href="/" className="hover:text-gray-900 transition-colors">Home</Link>
                                 <span className="mx-2 text-gray-300">/</span>
-                                <span className="text-primary font-bold">Shop</span>
-                                {params?.category && (
+                                {params?.category ? (
+                                    <Link href="/products" className="hover:text-gray-900 transition-colors">Shop</Link>
+                                ) : (
+                                    <span className="text-primary font-bold">Shop</span>
+                                )}
+                                
+                                {breadcrumbs ? (
+                                    breadcrumbs.map((crumb, idx) => {
+                                        const isLast = idx === breadcrumbs.length - 1;
+                                        return (
+                                            <div key={crumb.slug} className="flex items-center">
+                                                <span className="mx-2 text-gray-300">/</span>
+                                                {isLast ? (
+                                                    <span className="text-primary font-bold">{crumb.name}</span>
+                                                ) : (
+                                                    <Link href={`/products?category=${crumb.slug}`} className="hover:text-gray-900 transition-colors">
+                                                        {crumb.name}
+                                                    </Link>
+                                                )}
+                                            </div>
+                                        );
+                                    })
+                                ) : params?.category ? (
                                     <>
                                         <span className="mx-2 text-gray-300">/</span>
-                                        <span className="text-gray-900 capitalize">{params.category.replace(/-/g, ' ')}</span>
+                                        <span className="text-primary font-bold capitalize">{params.category.replace(/-/g, ' ')}</span>
                                     </>
-                                )}
+                                ) : null}
                             </nav>
                         </div>
                         <div className="flex-grow md:flex md:justify-end">
