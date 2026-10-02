@@ -996,7 +996,7 @@ function CheckoutContent() {
                                                                 <span className="text-[8px] font-bold bg-rose-50 text-rose-500 px-1 py-0.5 rounded tracking-widest whitespace-nowrap">
                                                                     {item.discountType === "flat"
                                                                         ? `-${formatPrice(item.discount)}`
-                                                                        : `-${item.discount}%`}
+                                                                        : `-${Math.round(item.discount)}%`}
                                                                 </span>
                                                             )}
                                                         </div>

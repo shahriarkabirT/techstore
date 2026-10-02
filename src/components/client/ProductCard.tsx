@@ -112,7 +112,7 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
 
                         {(product.discountValue > 0 || product.discount > 0) && (
                             <div className="absolute top-4 left-4 bg-rose-500 text-white text-xs font-black px-3 py-1.5 rounded shadow-xl z-20 tracking-tight">
-                                {product.discountType === 'flat' ? `Save ${formatCurrency(product.discountValue, true)}` : `${product.discountValue || product.discount}% off`}
+                                {product.discountType === 'flat' ? `Save ${formatCurrency(product.discountValue, true)}` : `${Math.round(product.discountValue || product.discount)}% off`}
                             </div>
                         )}
                     </Link>
@@ -212,7 +212,7 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
                 {/* Right Badge */}
                 {(product.discountValue > 0 || product.discount > 0) && (
                     <span className="bg-emerald-500 text-white text-[9px] sm:text-[10px] font-semibold px-1.5 py-[2px] rounded-[3px] whitespace-nowrap shadow-sm min-w-0 truncate">
-                        Save {product.discountType === 'flat' ? formatCurrency(product.discountValue, true) : `${product.discountValue || product.discount}%`}
+                        Save {product.discountType === 'flat' ? formatCurrency(product.discountValue, true) : `${Math.round(product.discountValue || product.discount)}%`}
                     </span>
                 )}
             </div>

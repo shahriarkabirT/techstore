@@ -9,7 +9,7 @@ export function formatCurrency(amount: number, useSign: boolean = false): string
         style: 'currency',
         currency: 'BDT',
         minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
+        maximumFractionDigits: 0,
     }).format(amount);
     
     if (useSign) {
@@ -50,7 +50,7 @@ export function slugify(text: string): string {
 export function calculateDiscountedPrice(mrp: number, discountValue: number, discountType: 'flat' | 'percentage' = 'percentage'): number {
     if (!discountValue || discountValue <= 0) return mrp;
     if (discountType === 'percentage') {
-        return mrp - (mrp * discountValue) / 100;
+        return Math.round(mrp - (mrp * discountValue) / 100);
     } else {
         return Math.max(0, mrp - discountValue);
     }

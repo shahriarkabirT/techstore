@@ -86,7 +86,7 @@ export default function ProductInfo({
                     <>
                         <span className="text-sm lg:text-base text-gray-400 line-through">{formatCurrency(currentMrp)}</span>
                         <span className="text-[10px] lg:text-xs font-black bg-green-100 text-green-700 px-1.5 lg:px-2 py-0.5 rounded">
-                            Save {currentDiscountType === 'flat' ? formatCurrency(savedAmount) : `${savedPercent}%`}
+                            Save {currentDiscountType === 'flat' ? formatCurrency(savedAmount) : `${Math.round(savedPercent)}%`}
                         </span>
                     </>
                 )}

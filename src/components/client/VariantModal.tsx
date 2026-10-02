@@ -255,7 +255,7 @@ export default function VariantModal({ product, isOpen, onClose }: VariantModalP
                             </div>
                             {currentDiscountValue > 0 && (
                                 <span className="inline-flex w-max mt-1.5 bg-gray-100 text-gray-600 text-[11px] font-medium px-2 py-0.5 rounded">
-                                    {currentDiscountType === 'flat' ? `${formatCurrency(currentDiscountValue)} OFF` : `${currentDiscountValue}% OFF`}
+                                    {currentDiscountType === 'flat' ? `${formatCurrency(currentDiscountValue)} OFF` : `${Math.round(currentDiscountValue)}% OFF`}
                                 </span>
                             )}
                         </div>

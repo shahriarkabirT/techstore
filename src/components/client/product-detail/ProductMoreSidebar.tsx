@@ -119,7 +119,7 @@ export default async function ProductMoreSidebar({
                                 )}
                                 {discountVal > 0 && (
                                     <span className="absolute top-0 left-0 bg-primary text-white text-[8px] font-black px-1 py-0.5 leading-none">
-                                        {product.discountType === 'flat' ? `৳${discountVal} off` : `${discountVal}%`}
+                                        {product.discountType === 'flat' ? `৳${discountVal} off` : `${Math.round(discountVal)}%`}
                                     </span>
                                 )}
                             </div>

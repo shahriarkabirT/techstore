@@ -160,7 +160,7 @@ export default function ProductImageGallery({
 
                     {discountValue > 0 && (
                         <div className="absolute top-3 left-3 bg-primary text-white text-[10px] font-black px-2.5 py-1 rounded z-10">
-                            {discountType === 'flat' ? `Save ৳${discountValue}` : `${discountValue}% OFF`}
+                            {discountType === 'flat' ? `Save ৳${discountValue}` : `${Math.round(discountValue)}% OFF`}
                         </div>
                     )}
 
