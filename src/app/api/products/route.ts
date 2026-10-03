@@ -125,6 +125,7 @@ export async function POST(request: NextRequest) {
             isFeatured,
             productCost,
             compatibleModels,
+            youtubeVideoLink,
         } = body;
 
         // Validation Logic
@@ -249,6 +250,7 @@ export async function POST(request: NextRequest) {
             preorder: !!preorder,
             productType,
             isFeatured: !!isFeatured,
+            youtubeVideoLink: youtubeVideoLink || undefined,
             ...(parsedProductCost !== undefined ? { productCost: parsedProductCost } : {}),
         });
 

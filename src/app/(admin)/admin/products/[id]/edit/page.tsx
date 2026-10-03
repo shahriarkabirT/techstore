@@ -67,6 +67,7 @@ function ProductForm({ product, id }: { product: any; id: string }) {
         weight: (product as any).weight === null ? '' : ((product as any).weight || '').toString(),
         brand: (product.brand as any)?._id || product.brand || '',
         productCost: (product as any).productCost != null && (product as any).productCost !== '' ? String((product as any).productCost) : '',
+        youtubeVideoLink: product.youtubeVideoLink || '',
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isPricingExpanded, setIsPricingExpanded] = useState(false);
@@ -297,6 +298,7 @@ function ProductForm({ product, id }: { product: any; id: string }) {
                     sizeGuide: formData.sizeGuide,
                     images: formData.images.filter((img) => img.trim()),
                     tags: formData.tags ? formData.tags.split(',').map(t => t.trim()) : [],
+                    youtubeVideoLink: formData.youtubeVideoLink,
                     compatibleModels: formData.compatibleModels,
                     discountType: formData.discountType as any,
                     discountValue: Number(formData.discountValue) || 0,
@@ -416,6 +418,17 @@ function ProductForm({ product, id }: { product: any; id: string }) {
                                         onChange={handleInputChange}
                                         className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm font-medium text-gray-900 focus:border-gray-900 transition-all placeholder:text-gray-400 outline-none"
                                         placeholder="PROD-101"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[11px] font-semibold uppercase tracking-widest text-gray-900 mb-2">YouTube Video Link</label>
+                                    <input
+                                        type="text"
+                                        name="youtubeVideoLink"
+                                        value={formData.youtubeVideoLink}
+                                        onChange={handleInputChange}
+                                        className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm font-medium text-gray-900 focus:border-gray-900 transition-all placeholder:text-gray-400 outline-none"
+                                        placeholder="https://youtube.com/watch?v=..."
                                     />
                                 </div>
                             </div>

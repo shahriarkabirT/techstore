@@ -98,6 +98,7 @@ export interface IProduct {
     variants: IVariant[];
     sku?: string;
     tags: string[];
+    youtubeVideoLink?: string;
     compatibleModels?: string[];
     seoMetadata?: ISEOMetadata;
     averageRating: number;

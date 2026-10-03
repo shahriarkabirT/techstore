@@ -143,6 +143,10 @@ const ProductSchema = new Schema<IProductDocument>(
             type: [String],
             default: [],
         },
+        youtubeVideoLink: {
+            type: String,
+            trim: true,
+        },
         compatibleModels: {
             type: [String],
             default: [],

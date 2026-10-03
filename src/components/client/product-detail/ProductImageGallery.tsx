@@ -11,6 +11,7 @@ interface ProductImageGalleryProps {
     discountValue?: number;
     discountType?: string;
     activeVariantImages?: string[];
+    youtubeVideoLink?: string;
     onImageChange?: (img: string) => void;
 }
 
@@ -20,11 +21,22 @@ export default function ProductImageGallery({
     discountValue = 0,
     discountType,
     activeVariantImages,
+    youtubeVideoLink,
     onImageChange,
 }: ProductImageGalleryProps) {
-    const galleryImages = (activeVariantImages && activeVariantImages.length > 0)
+    const baseImages = (activeVariantImages && activeVariantImages.length > 0)
         ? activeVariantImages
         : images;
+
+    const galleryItems = baseImages.map(img => ({ type: 'image', url: img }));
+    if (youtubeVideoLink) {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = youtubeVideoLink.match(regExp);
+        const videoId = (match && match[2].length === 11) ? match[2] : null;
+        if (videoId) {
+            galleryItems.push({ type: 'video', url: `https://www.youtube.com/embed/${videoId}` });
+        }
+    }
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,25 +46,28 @@ export default function ProductImageGallery({
     const isDragging = useRef(false);
     const dragDelta = useRef(0);
 
-    const mainImage = galleryImages?.[currentIndex] || '';
+    const mainItem = galleryItems?.[currentIndex] || null;
 
     const handleSelect = useCallback((index: number) => {
         if (index === currentIndex) return;
         setCurrentIndex(index);
-        onImageChange?.(galleryImages[index]);
-    }, [currentIndex, galleryImages, onImageChange]);
+        const item = galleryItems[index];
+        if (item?.type === 'image') {
+            onImageChange?.(item.url);
+        }
+    }, [currentIndex, galleryItems, onImageChange]);
 
     const goNext = useCallback(() => {
-        if (galleryImages.length <= 1) return;
-        const next = (currentIndex + 1) % galleryImages.length;
+        if (galleryItems.length <= 1) return;
+        const next = (currentIndex + 1) % galleryItems.length;
         handleSelect(next);
-    }, [currentIndex, galleryImages, handleSelect]);
+    }, [currentIndex, galleryItems, handleSelect]);
 
     const goPrev = useCallback(() => {
-        if (galleryImages.length <= 1) return;
-        const prev = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
+        if (galleryItems.length <= 1) return;
+        const prev = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
         handleSelect(prev);
-    }, [currentIndex, galleryImages, handleSelect]);
+    }, [currentIndex, galleryItems, handleSelect]);
 
     // ── Mouse drag (desktop) ──────────────────────────────────
     const handleMouseDown = (e: React.MouseEvent) => {
@@ -124,33 +139,41 @@ export default function ProductImageGallery({
                     <div
                         style={{
                             display: 'flex',
-                            width: `${galleryImages.length * 100}%`,
-                            transform: `translateX(-${currentIndex * (100 / galleryImages.length)}%)`,
+                            width: `${galleryItems.length * 100}%`,
+                            transform: `translateX(-${currentIndex * (100 / galleryItems.length)}%)`,
                             transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                             height: '100%',
                         }}
                     >
-                        {galleryImages.map((img, i) => (
+                        {galleryItems.map((item, i) => (
                             <div
                                 key={i}
                                 style={{
-                                    width: `${100 / galleryImages.length}%`,
+                                    width: `${100 / galleryItems.length}%`,
                                     flexShrink: 0,
                                     position: 'relative',
                                     height: '100%',
                                 }}
                             >
-                                {Math.abs(i - currentIndex) <= 1 ? (
-                                    <ProductImageZoom src={img} alt={`${title} ${i + 1}`} />
+                                {item.type === 'video' ? (
+                                    <iframe 
+                                        src={item.url} 
+                                        title={`${title} video ${i + 1}`} 
+                                        className="w-full h-full border-0" 
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                        allowFullScreen 
+                                    />
+                                ) : Math.abs(i - currentIndex) <= 1 ? (
+                                    <ProductImageZoom src={item.url} alt={`${title} ${i + 1}`} />
                                 ) : (
-                                    <WatermarkedImage src={img} alt={`${title} ${i + 1}`} className="absolute inset-0 w-full h-full" imageClassName="object-cover" />
+                                    <WatermarkedImage src={item.url} alt={`${title} ${i + 1}`} className="absolute inset-0 w-full h-full" imageClassName="object-cover" />
                                 )}
                             </div>
                         ))}
                     </div>
 
                     {/* Fallback when no images */}
-                    {!mainImage && (
+                    {!mainItem && (
                         <div className="absolute inset-0 flex items-center justify-center text-gray-200">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor" className="w-16 h-16">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
@@ -176,7 +199,7 @@ export default function ProductImageGallery({
                     </button>
 
                     {/* Left Arrow */}
-                    {galleryImages.length > 1 && (
+                    {galleryItems.length > 1 && (
                         <button
                             onClick={(e) => { e.stopPropagation(); goPrev(); }}
                             aria-label="Previous image"
@@ -189,7 +212,7 @@ export default function ProductImageGallery({
                     )}
 
                     {/* Right Arrow */}
-                    {galleryImages.length > 1 && (
+                    {galleryItems.length > 1 && (
                         <button
                             onClick={(e) => { e.stopPropagation(); goNext(); }}
                             aria-label="Next image"
@@ -202,9 +225,9 @@ export default function ProductImageGallery({
                     )}
 
                     {/* Dot indicators */}
-                    {galleryImages.length > 1 && (
+                    {galleryItems.length > 1 && (
                         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10">
-                            {galleryImages.map((_, i) => (
+                            {galleryItems.map((_, i) => (
                                 <button
                                     key={i}
                                     onClick={(e) => { e.stopPropagation(); handleSelect(i); }}
@@ -221,15 +244,23 @@ export default function ProductImageGallery({
                 </div>
 
                 {/* Thumbnails */}
-                {galleryImages && galleryImages.length > 1 && (
+                {galleryItems && galleryItems.length > 1 && (
                     <div className="flex gap-2 overflow-x-auto pb-1">
-                        {galleryImages.map((img, i) => (
+                        {galleryItems.map((item, i) => (
                             <button
                                 key={i}
                                 onClick={() => handleSelect(i)}
-                                className={`relative w-16 h-16 flex-shrink-0 border-2 rounded overflow-hidden transition-all ${currentIndex === i ? 'border-orange-500' : 'border-gray-200 opacity-60 hover:opacity-100'}`}
+                                className={`relative w-16 h-16 flex-shrink-0 border-2 rounded overflow-hidden transition-all ${currentIndex === i ? 'border-orange-500' : 'border-gray-200 opacity-60 hover:opacity-100'} ${item.type === 'video' ? 'bg-black' : ''}`}
                             >
-                                <WatermarkedImage src={img} alt={`${title} ${i + 1}`} className="absolute inset-0 w-full h-full" imageClassName="object-cover" />
+                                {item.type === 'video' ? (
+                                    <div className="absolute inset-0 flex items-center justify-center text-red-600 bg-gray-100">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
+                                          <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+                                        </svg>
+                                    </div>
+                                ) : (
+                                    <WatermarkedImage src={item.url} alt={`${title} ${i + 1}`} className="absolute inset-0 w-full h-full" imageClassName="object-cover" />
+                                )}
                             </button>
                         ))}
                     </div>
@@ -254,17 +285,35 @@ export default function ProductImageGallery({
                         className="relative w-full max-w-2xl aspect-square rounded overflow-hidden"
                         onClick={e => e.stopPropagation()}
                     >
-                        <WatermarkedImage src={mainImage} alt={title} className="absolute inset-0 w-full h-full" imageClassName="object-contain" />
+                        {mainItem?.type === 'video' ? (
+                            <iframe 
+                                src={mainItem.url} 
+                                title={`${title} video modal`} 
+                                className="w-full h-full border-0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowFullScreen 
+                            />
+                        ) : mainItem ? (
+                            <WatermarkedImage src={mainItem.url} alt={title} className="absolute inset-0 w-full h-full" imageClassName="object-contain" />
+                        ) : null}
                     </div>
-                    {galleryImages.length > 1 && (
+                    {galleryItems.length > 1 && (
                         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
-                            {galleryImages.map((img, i) => (
+                            {galleryItems.map((item, i) => (
                                 <button
                                     key={i}
                                     onClick={e => { e.stopPropagation(); handleSelect(i); }}
                                     className={`w-12 h-12 rounded border-2 overflow-hidden relative transition-all ${currentIndex === i ? 'border-white' : 'border-white/30 opacity-50 hover:opacity-100'}`}
                                 >
-                                    <WatermarkedImage src={img} alt="" className="absolute inset-0 w-full h-full" imageClassName="object-cover" />
+                                    {item.type === 'video' ? (
+                                        <div className="absolute inset-0 flex items-center justify-center text-red-600 bg-gray-100">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                                              <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+                                            </svg>
+                                        </div>
+                                    ) : (
+                                        <WatermarkedImage src={item.url} alt="" className="absolute inset-0 w-full h-full" imageClassName="object-cover" />
+                                    )}
                                 </button>
                             ))}
                         </div>

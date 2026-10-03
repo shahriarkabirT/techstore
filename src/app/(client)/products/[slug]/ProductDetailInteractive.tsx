@@ -409,6 +409,7 @@ export default function ProductDetailInteractive({
                     discountValue={currentDiscountValue}
                     discountType={currentDiscountType}
                     activeVariantImages={resolvedImageVariant?.images}
+                    youtubeVideoLink={product.youtubeVideoLink}
                 />
             </div>
 

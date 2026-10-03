@@ -42,6 +42,7 @@ export default function NewProductPage() {
         isFeatured: false,
         brand: '',
         productCost: '',
+        youtubeVideoLink: '',
     });
     const [createProduct, { isLoading: isSubmitting }] = useCreateProductMutation();
     const { data: brands = [] } = useGetBrandsQuery();
@@ -272,6 +273,7 @@ export default function NewProductPage() {
                 images: formData.images.filter((img) => img.trim()),
                 sizeGuide: formData.sizeGuide,
                 tags: formData.tags ? formData.tags.split(',').map(t => t.trim()) : [],
+                youtubeVideoLink: formData.youtubeVideoLink,
                 compatibleModels: formData.compatibleModels,
                 discountType: formData.discountType as any,
                 discountValue: Number(formData.discountValue) || 0,
@@ -369,6 +371,17 @@ export default function NewProductPage() {
                                         onChange={handleInputChange}
                                         className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm font-medium text-gray-900 focus:border-gray-900 transition-all placeholder:text-gray-400 outline-none"
                                         placeholder="PROD-101"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-[11px] font-semibold uppercase tracking-widest text-gray-900 mb-2">YouTube Video Link</label>
+                                    <input
+                                        type="text"
+                                        name="youtubeVideoLink"
+                                        value={formData.youtubeVideoLink}
+                                        onChange={handleInputChange}
+                                        className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm font-medium text-gray-900 focus:border-gray-900 transition-all placeholder:text-gray-400 outline-none"
+                                        placeholder="https://youtube.com/watch?v=..."
                                     />
                                 </div>
                             </div>
