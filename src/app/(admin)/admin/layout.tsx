@@ -33,7 +33,7 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
         user?.role === 'moderator'
             ? { href: '/admin/moderator-dashboard', label: 'Moderator Dashboard', icon: 'dashboard', permKey: '_moderator_dashboard' }
             : { href: '/admin/dashboard', label: 'Dashboard', icon: 'dashboard', permKey: 'dashboard' },
-        { href: '/admin/analytics', label: 'Analytics', icon: 'analytics', permKey: 'dashboard' },
+        { href: '/admin/analytics', label: 'Analytics', icon: 'analytics', permKey: 'analytics' },
         { href: '/admin/pos', label: 'POS Terminal', icon: 'pos', permKey: 'pos' },
         {
             label: 'Products',

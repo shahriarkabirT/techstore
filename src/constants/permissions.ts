@@ -23,6 +23,12 @@ export const PERMISSIONS: Permission[] = [
         apiPrefixes: ['/api/admin/stats'],
     },
     {
+        key: 'analytics',
+        label: 'Analytics',
+        adminPaths: ['/admin/analytics'],
+        apiPrefixes: ['/api/analytics', '/api/admin/analytics'],
+    },
+    {
         key: 'pos',
         label: 'POS Terminal',
         adminPaths: ['/admin/pos'],

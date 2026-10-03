@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { NextRequest } from 'next/server';
 import { GET as getProducts, POST as createProduct } from '@/app/api/products/route';
 import Product from '@/models/Product';
 import Category from '@/models/Category';
@@ -33,7 +34,7 @@ describe('Products API Integration Tests', () => {
             });
             (Product.countDocuments as any).mockResolvedValue(2);
 
-            const request = new Request('http://localhost/api/products?page=1&limit=10');
+            const request = new NextRequest('http://localhost/api/products?page=1&limit=10');
             const response = await getProducts(request);
             const result = await response.json();
 
@@ -53,7 +54,7 @@ describe('Products API Integration Tests', () => {
             });
             (Product.countDocuments as any).mockResolvedValue(0);
 
-            const request = new Request('http://localhost/api/products?category=test-cat');
+            const request = new NextRequest('http://localhost/api/products?category=test-cat');
             await getProducts(request);
 
             expect(Category.findOne).toHaveBeenCalledWith({ slug: 'test-cat' });
@@ -78,7 +79,7 @@ describe('Products API Integration Tests', () => {
                 populate: vi.fn().mockResolvedValue({ ...productData }),
             });
 
-            const request = new Request('http://localhost/api/products', {
+            const request = new NextRequest('http://localhost/api/products', {
                 method: 'POST',
                 body: JSON.stringify(productData),
             });
@@ -94,7 +95,7 @@ describe('Products API Integration Tests', () => {
         it('should return 401 if not an admin', async () => {
             (authLib.getAdminFromToken as any).mockResolvedValue(null);
 
-            const request = new Request('http://localhost/api/products', {
+            const request = new NextRequest('http://localhost/api/products', {
                 method: 'POST',
                 body: JSON.stringify(productData),
             });
@@ -111,7 +112,7 @@ describe('Products API Integration Tests', () => {
 
             const invalidData = { ...productData, price: 1200 }; // price > mrp
 
-            const request = new Request('http://localhost/api/products', {
+            const request = new NextRequest('http://localhost/api/products', {
                 method: 'POST',
                 body: JSON.stringify(invalidData),
             });

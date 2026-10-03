@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
+import dbConnect from '@/lib/db';
 import Visit from '@/models/Visit';
 import geoip from 'geoip-lite';
-import UAParser from 'ua-parser-js';
+import { UAParser } from 'ua-parser-js';
 import { cookies } from 'next/headers';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
         const city = geo?.city || 'Unknown';
 
         // Session ID via cookies to track unique visitors across pages
-        const cookieStore = cookies();
+        const cookieStore = await cookies();
         let sessionId = cookieStore.get('analytics_session_id')?.value;
         
         // Note: setting cookies in a POST route might not persist if the route is cached or 
