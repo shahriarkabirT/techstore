@@ -123,6 +123,36 @@ export default function ImageUpload({
         }
     };
 
+    const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+    const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+    const handleItemDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+        setDraggedIndex(index);
+        e.dataTransfer.effectAllowed = "move";
+        // To make it draggable in Firefox, data must be set
+        e.dataTransfer.setData("text/plain", index.toString());
+    };
+
+    const handleItemDragEnter = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+        e.preventDefault();
+        if (draggedIndex !== null && draggedIndex !== index) {
+            setDragOverIndex(index);
+        }
+    };
+
+    const handleItemDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        if (draggedIndex !== null && dragOverIndex !== null && draggedIndex !== dragOverIndex) {
+            const newImages = [...images];
+            const draggedImage = newImages[draggedIndex];
+            newImages.splice(draggedIndex, 1);
+            newImages.splice(dragOverIndex, 0, draggedImage);
+            onImagesChange(newImages);
+        }
+        setDraggedIndex(null);
+        setDragOverIndex(null);
+    };
+
     const removeImage = (index: number) => {
         const newImages = images.filter((_, i) => i !== index);
         onImagesChange(newImages);
@@ -151,7 +181,15 @@ export default function ImageUpload({
                 {images.filter(img => img).map((img, index) => {
                     const ratioClass = aspectRatio.replace(':', '/');
                     return (
-                        <div key={index} className={`relative group rounded-lg overflow-hidden border border-gray-200 bg-white shadow-sm`} style={{ aspectRatio: ratioClass }}>
+                        <div key={index} 
+                            className={`relative group rounded-lg overflow-hidden border ${dragOverIndex === index ? 'border-indigo-500 ring-2 ring-indigo-500 scale-105 z-10' : 'border-gray-200'} ${draggedIndex === index ? 'opacity-50' : 'opacity-100'} bg-white shadow-sm transition-all cursor-move`} 
+                            style={{ aspectRatio: ratioClass }}
+                            draggable
+                            onDragStart={(e) => handleItemDragStart(e, index)}
+                            onDragEnter={(e) => handleItemDragEnter(e, index)}
+                            onDragOver={(e) => e.preventDefault()}
+                            onDragEnd={handleItemDragEnd}
+                        >
                             <div className="absolute inset-0 cursor-pointer" onClick={() => setPreviewImage(img)}>
                                 <Image
                                     src={img}
