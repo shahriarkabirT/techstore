@@ -76,10 +76,16 @@ export async function GET(req: Request) {
             { $limit: 10 }
         ]);
 
+        // Real-time Active Users (Active in the last 15 minutes)
+        const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+        const activeVisitorsArray = await Visit.distinct('sessionId', { visitedAt: { $gte: fifteenMinutesAgo } });
+        const activeUsersCount = activeVisitorsArray.length;
+
         return NextResponse.json({
             success: true,
             totalVisits,
             uniqueVisitors,
+            activeUsersCount,
             visitsByDate,
             topCountries,
             topDevices,

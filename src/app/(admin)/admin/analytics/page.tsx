@@ -63,7 +63,18 @@ export default function AnalyticsPage() {
             ) : data && (
                 <>
                     {/* Stats Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                        <div className="bg-indigo-50 p-6 rounded-xl border border-indigo-100 shadow-sm relative overflow-hidden">
+                            <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-indigo-200 rounded-full opacity-20 blur-xl"></div>
+                            <h3 className="text-sm font-medium text-indigo-800 uppercase tracking-wider flex items-center gap-2">
+                                <span className="relative flex h-2.5 w-2.5">
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-indigo-600"></span>
+                                </span>
+                                Active Now
+                            </h3>
+                            <p className="text-3xl font-bold text-indigo-900 mt-2">{data.activeUsersCount || 0}</p>
+                        </div>
                         <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                             <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">Total Visits</h3>
                             <p className="text-3xl font-bold text-gray-900 mt-2">{data.totalVisits.toLocaleString()}</p>
