@@ -12,6 +12,7 @@ import { Toaster } from 'react-hot-toast';
 import { Suspense } from 'react';
 import dbConnect from '@/lib/db';
 import Settings from '@/models/Settings';
+import AnalyticsTracker from '@/components/shared/AnalyticsTracker';
 
 
 const openSans = Open_Sans({
@@ -113,6 +114,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                 )}
             </head>
             <body className={`${openSans.variable} font-sans antialiased`}>
+                <Suspense fallback={null}>
+                    <AnalyticsTracker />
+                </Suspense>
                 {/* Google Tag Manager (noscript) */}
                 {gtmId && (
                     <noscript>
