@@ -186,6 +186,10 @@ const ProductSchema = new Schema<IProductDocument>(
             type: Boolean,
             default: false,
         },
+        isOnSale: {
+            type: Boolean,
+            default: false,
+        },
     },
     {
         timestamps: true,

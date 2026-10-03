@@ -215,6 +215,16 @@ function AdminProductsPageInner() {
         }
     };
 
+    const handleToggleSale = async (id: string, currentStatus: boolean) => {
+        try {
+            await updateProduct({ id, body: { isOnSale: !currentStatus } }).unwrap();
+            toast.success(currentStatus ? 'Removed from sale' : 'Marked as on sale');
+        } catch (error) {
+            console.error('Error updating sale status:', error);
+            toast.error('Failed to update sale status');
+        }
+    };
+
     const handleView = (product: IProduct) => {
         setSelectedProduct(product);
         setIsModalOpen(true);
@@ -445,6 +455,7 @@ function AdminProductsPageInner() {
                 onView={handleView}
                 onToggleActive={handleToggleActive}
                 onToggleFeatured={handleToggleFeatured}
+                onToggleSale={handleToggleSale}
                 formatPrice={formatPrice}
                 selectedIds={selectedIds}
                 onSelect={handleSelect}

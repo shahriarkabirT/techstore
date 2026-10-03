@@ -6,7 +6,7 @@ import ProductCard from './ProductCard';
 import { useGetProductsQuery } from '@/redux/features/product/productApi';
 import { ProductCardSkeleton, ProductCardListSkeleton } from '../shared/Skeletons';
 
-export default function ProductGrid({ initialData }: { initialData?: any }) {
+export default function ProductGrid({ initialData, forceOnSale }: { initialData?: any, forceOnSale?: boolean }) {
     const searchParams = useSearchParams();
     const router = useRouter();
 
@@ -57,6 +57,7 @@ export default function ProductGrid({ initialData }: { initialData?: any }) {
         maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
         inStock,
         brand,
+        onSale: forceOnSale ? 'true' : undefined,
         ...attributes,
     });
 

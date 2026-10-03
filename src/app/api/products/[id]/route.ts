@@ -166,6 +166,7 @@ export async function PUT(request, { params }) {
             productCost,
             compatibleModels,
             youtubeVideoLink,
+            isOnSale,
         } = body;
 
         // Validation Logic for Updates
@@ -304,6 +305,7 @@ export async function PUT(request, { params }) {
         if (preorder !== undefined) product.preorder = !!preorder;
         if (productType !== undefined) product.productType = productType;
         if (isFeatured !== undefined) product.isFeatured = !!isFeatured;
+        if (isOnSale !== undefined) product.isOnSale = !!isOnSale;
         if (youtubeVideoLink !== undefined) product.youtubeVideoLink = youtubeVideoLink;
 
         const parsedProductCost = parseOptionalProductCost(productCost);

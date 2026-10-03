@@ -131,6 +131,7 @@ export default function Navbar({ initialSettings }: NavbarProps) {
                 { label: "Home", href: "/" },
                 { label: "Categories", href: "/products", hasMegaMenu: true },
                 { label: "Shop", href: "/products" },
+                { label: "Sale", href: "/sale" },
                 { label: "Contact", href: "/contact" },
                 { label: "Stores", href: "/store-locations" },
               ].map((link) => {

@@ -56,6 +56,7 @@ export async function GET(request: NextRequest) {
             maxPrice: searchParams.get('maxPrice'),
             brand: searchParams.get('brand'),
             inStock: searchParams.get('inStock'),
+            onSale: searchParams.get('onSale'),
         };
 
         const attributes: Record<string, string[]> = {};

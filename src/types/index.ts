@@ -105,6 +105,7 @@ export interface IProduct {
     reviewCount: number;
     isActive: boolean;
     isFeatured?: boolean;
+    isOnSale?: boolean;
     freeShipping?: boolean;
     preorder?: boolean;
     discountedPrice?: number;

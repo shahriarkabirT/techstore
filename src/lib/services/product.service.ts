@@ -23,6 +23,7 @@ export async function getProductsList(params: {
     brand?: string | null;
     inStock?: boolean | string | null;
     attributes?: Record<string, string[]>;
+    onSale?: string | null | boolean;
 }) {
     await dbConnect();
 
@@ -40,7 +41,8 @@ export async function getProductsList(params: {
         maxPrice,
         brand,
         inStock,
-        attributes
+        attributes,
+        onSale
     } = params;
 
     const activeOnly = activeQuery !== 'false' && activeQuery !== 'all';
@@ -64,6 +66,12 @@ export async function getProductsList(params: {
 
     if (inStock === 'true' || inStock === true) {
         query.stock = { $gt: 0 };
+    }
+
+    if (onSale === 'true' || onSale === true) {
+        query.isOnSale = true;
+    } else if (onSale === 'false' || onSale === false) {
+        query.isOnSale = false;
     }
 
     if (category) {
