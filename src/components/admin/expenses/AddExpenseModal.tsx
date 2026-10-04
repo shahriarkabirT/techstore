@@ -7,6 +7,15 @@ import { useAddExpenseMutation } from '@/redux/features/expense/expenseApi';
 const CATEGORIES = ['Marketing', 'Office', 'Software', 'Packaging', 'Fulfillment', 'Other'];
 const TYPES = ['Single', 'Bulk', 'Overhead'];
 
+const TITLE_SUGGESTIONS: Record<string, string[]> = {
+    'Marketing': ['Facebook Ads', 'Google Ads', 'TikTok Ads', 'Influencer', 'SEO Tools', 'SMS Marketing'],
+    'Office': ['Office Rent', 'Electricity Bill', 'Internet Bill', 'Water Bill', 'Office Supplies', 'Cleaning', 'Salaries'],
+    'Software': ['Hosting', 'Domain Renewal', 'SaaS Subscriptions', 'Vercel / AWS', 'Google Workspace'],
+    'Packaging': ['Poly Bags', 'Bubble Wrap', 'Carton Boxes', 'Tapes', 'Labels / Stickers'],
+    'Fulfillment': ['Pathao Delivery', 'RedX Delivery', 'Steadfast', 'Transport / Fuel', 'Labor'],
+    'Other': ['Miscellaneous', 'Travel', 'Meals / Entertainment', 'Bonus']
+};
+
 interface AddExpenseModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -73,11 +82,17 @@ export function AddExpenseModal({ isOpen, onClose, onSuccess }: AddExpenseModalP
                         <input
                             type="text"
                             required
+                            list="title-suggestions"
                             value={formData.title}
                             onChange={e => setFormData({ ...formData, title: e.target.value })}
                             className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                             placeholder="e.g., Facebook Ads, Office Rent"
                         />
+                        <datalist id="title-suggestions">
+                            {TITLE_SUGGESTIONS[formData.category]?.map(suggestion => (
+                                <option key={suggestion} value={suggestion} />
+                            ))}
+                        </datalist>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>

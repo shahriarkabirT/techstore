@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRef, useState, ChangeEvent, useEffect } from "react";
 import { Loader2, Maximize2 } from "lucide-react";
 import WatermarkedImage from "@/components/ui/WatermarkedImage";
+import imageCompression from "browser-image-compression";
 
 interface ImageUploadProps {
     images: string[];
@@ -61,8 +62,27 @@ export default function ImageUpload({
 
         try {
             for (const file of files) {
+                // Compress the image before uploading
+                let fileToUpload = file;
+                try {
+                    const options = {
+                        maxSizeMB: 1,          // Compress to ~1MB or less
+                        maxWidthOrHeight: 1920, // Max dimension of 1920px
+                        useWebWorker: true,
+                        fileType: "image/webp", // Convert to WebP format directly in the browser
+                    };
+                    const compressedBlob = await imageCompression(file, options);
+                    // Convert Blob back to File object to retain name and metadata properties expected by server
+                    fileToUpload = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, ".webp"), {
+                        type: "image/webp"
+                    });
+                } catch (compressionError) {
+                    console.error("Image compression error:", compressionError);
+                    // Fall back to original file if compression fails
+                }
+
                 const formData = new FormData();
-                formData.append("file", file);
+                formData.append("file", fileToUpload);
 
                 const res = await fetch("/api/upload", {
                     method: "POST",
