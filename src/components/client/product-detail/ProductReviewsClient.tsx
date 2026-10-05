@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useGetApprovedReviewsQuery, useSubmitReviewMutation } from '@/redux/features/reviews/reviewApi';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
@@ -121,6 +121,23 @@ export default function ProductReviewsClient({ productId }: { productId: string 
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    // Intersection observer for Trust Sparkle
+    const summaryRef = useRef<HTMLDivElement>(null);
+    const [hasSeenSummary, setHasSeenSummary] = useState(false);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting && !hasSeenSummary) {
+                    setHasSeenSummary(true);
+                }
+            },
+            { threshold: 0.6 }
+        );
+        if (summaryRef.current) observer.observe(summaryRef.current);
+        return () => observer.disconnect();
+    }, [hasSeenSummary]);
+
     // Calculate avg rating for the trigger button
     const total = reviews.length;
     const avg = total > 0 ? reviews.reduce((sum: any, r: any) => sum + r.rating, 0) / total : 0;
@@ -129,8 +146,16 @@ export default function ProductReviewsClient({ productId }: { productId: string 
     return (
         <div className="w-full">
             {/* Top Section: Compact Breakdown & Write Review */}
-            <div className="mb-8">
-                <div className="flex flex-col items-center justify-center p-8 bg-gray-50 rounded-2xl border border-gray-100 text-center">
+            <div className="mb-8" ref={summaryRef}>
+                <div className={`relative flex flex-col items-center justify-center p-8 bg-gray-50 rounded-2xl border border-gray-100 text-center transition-all ${hasSeenSummary && total > 0 ? 'trust-sparkle-trigger in-view' : ''}`}>
+                    {/* Floating Tooltip (Trust Sparkle) */}
+                    {total > 0 && (
+                        <div className={`absolute -top-14 bg-white px-4 py-2 rounded-xl shadow-xl text-xs font-bold border border-yellow-200 text-yellow-700 transition-all duration-700 delay-500 pointer-events-none whitespace-nowrap ${hasSeenSummary ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                            Loved by our community 💛
+                            <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-b border-r border-yellow-200 rotate-45"></div>
+                        </div>
+                    )}
+
                     <div className="text-6xl font-black text-gray-900 leading-none tracking-tighter mb-3">{avg.toFixed(1)}</div>
                     <div className="flex justify-center gap-1 mb-3">
                         {[1, 2, 3, 4, 5].map(s => (

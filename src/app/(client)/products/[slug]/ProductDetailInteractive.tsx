@@ -9,6 +9,7 @@ import { calculateDiscountedPrice } from '@/lib/utils';
 import ProductImageGallery from '@/components/client/product-detail/ProductImageGallery';
 import ProductInfo from '@/components/client/product-detail/ProductInfo';
 import CompatibleModelsSelector from '@/components/client/product-detail/CompatibleModelsSelector';
+import { toast } from 'react-hot-toast';
 
 interface ProductDetailInteractiveProps {
     initialProduct: any;
@@ -115,6 +116,26 @@ export default function ProductDetailInteractive({
             });
         }
     }, [product, discountedPrice]);
+
+    // Easter Egg Greeting
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            try {
+                const hasVisited = localStorage.getItem('hasVisited_techstore');
+                if (hasVisited) {
+                    toast('Welcome back! Good to see you again.', { icon: '👋', duration: 4000 });
+                } else {
+                    localStorage.setItem('hasVisited_techstore', 'true');
+                    const hour = new Date().getHours();
+                    const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+                    toast(`${greeting}! Treat yourself to something nice today. 🎁`, { duration: 5000 });
+                }
+            } catch (e) {
+                // Ignore local storage errors
+            }
+        }, 2000);
+        return () => clearTimeout(timer);
+    }, []);
 
     const [selectionError, setSelectionError] = useState<{ type: string; source: 'cart' | 'buy' } | null>(null);
     const [showAddedToCart, setShowAddedToCart] = useState(false);
@@ -246,6 +267,35 @@ export default function ProductDetailInteractive({
         });
 
         setShowAddedToCart(true);
+        
+        // 🎵 Play a professional, subtle two-tone success chime
+        try {
+            const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+            const ctx = new AudioContext();
+            
+            const playNote = (freq: number, startTime: number, duration: number) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                
+                // Very subtle, smooth volume envelope
+                gain.gain.setValueAtTime(0, startTime);
+                gain.gain.linearRampToValueAtTime(0.05, startTime + 0.02); // Max volume is low (0.05)
+                gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(startTime);
+                osc.stop(startTime + duration);
+            };
+            
+            // Play a gentle C6 -> E6 chime (classic success chord)
+            playNote(1046.50, ctx.currentTime, 0.3);
+            playNote(1318.51, ctx.currentTime + 0.1, 0.4);
+        } catch (e) {
+            // Ignore if browser blocks it or doesn't support AudioContext
+        }
     };
 
     const handleBuyNow = () => {

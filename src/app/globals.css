@@ -891,3 +891,15 @@ select.input {
 .responsive-grid-rows-2.show-all > * {
   display: block !important;
 }
+
+/* --- Customer UX Gestures --- */
+
+.trust-sparkle-trigger.in-view {
+  animation: goldBorderSweep 2s ease-out forwards;
+}
+
+@keyframes goldBorderSweep {
+  0% { box-shadow: 0 0 0 0px rgba(250, 204, 21, 0); border-color: #f3f4f6; }
+  30% { box-shadow: 0 0 0 8px rgba(250, 204, 21, 0.4); border-color: #facc15; transform: scale(1.02); }
+  100% { box-shadow: 0 0 0 0px rgba(250, 204, 21, 0); border-color: #f3f4f6; transform: scale(1); }
+}
