@@ -324,10 +324,10 @@ export default function VariantModal({ product, isOpen, onClose }: VariantModalP
                                                             ? 'w-9 h-9 rounded-full ring-offset-2'
                                                             : 'px-4 py-2 rounded-md text-[13px] font-medium border'
                                                             } ${selectedVariants[slug] === opt
-                                                                ? isColor ? 'ring-2 ring-gray-900' : 'bg-gray-900 border-gray-900 text-white'
+                                                                ? isColor ? 'ring-2 ring-primary' : 'bg-primary border-primary text-white'
                                                                 : !isAvailable
                                                                     ? isColor ? 'opacity-30 grayscale cursor-not-allowed' : 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed'
-                                                                    : isColor ? 'ring-1 ring-gray-200 hover:ring-gray-400' : 'bg-white border-gray-200 text-gray-700 hover:border-gray-900'
+                                                                    : isColor ? 'ring-1 ring-gray-200 hover:ring-gray-400' : 'bg-white border-gray-200 text-gray-700 hover:border-primary text-gray-800'
                                                             }`}
                                                         style={isColor ? { backgroundColor: colorHex || opt } : {}}
                                                         title={`${opt}${!isAvailable ? ' (Unavailable with current selection)' : ''}`}
