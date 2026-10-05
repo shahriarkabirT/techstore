@@ -7,9 +7,10 @@ interface ProductImageZoomProps {
     src: string;
     alt: string;
     onClick?: () => void;
+    priority?: boolean;
 }
 
-export default function ProductImageZoom({ src, alt, onClick }: ProductImageZoomProps) {
+export default function ProductImageZoom({ src, alt, onClick, priority = false }: ProductImageZoomProps) {
     const [zoomLevel, setZoomLevel] = useState(2);
     const [cursorPos, setCursorPos] = useState({ x: 50, y: 50 });
     const [isHovered, setIsHovered] = useState(false);
@@ -49,6 +50,7 @@ export default function ProductImageZoom({ src, alt, onClick }: ProductImageZoom
             <WatermarkedImage
                 src={src}
                 alt={alt}
+                priority={priority}
                 className="absolute inset-0 w-full h-full transition-transform duration-200 ease-out"
                 imageClassName="object-cover"
                 style={{

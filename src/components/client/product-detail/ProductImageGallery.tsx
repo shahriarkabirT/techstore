@@ -164,9 +164,9 @@ export default function ProductImageGallery({
                                         allowFullScreen 
                                     />
                                 ) : Math.abs(i - currentIndex) <= 1 ? (
-                                    <ProductImageZoom src={item.url} alt={`${title} ${i + 1}`} />
+                                    <ProductImageZoom src={item.url} alt={`${title} ${i + 1}`} priority={i === 0} />
                                 ) : (
-                                    <WatermarkedImage src={item.url} alt={`${title} ${i + 1}`} className="absolute inset-0 w-full h-full" imageClassName="object-cover" />
+                                    <WatermarkedImage src={item.url} alt={`${title} ${i + 1}`} priority={i === 0} className="absolute inset-0 w-full h-full" imageClassName="object-cover" />
                                 )}
                             </div>
                         ))}
