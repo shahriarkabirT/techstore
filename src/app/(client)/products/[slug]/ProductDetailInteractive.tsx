@@ -121,8 +121,17 @@ export default function ProductDetailInteractive({
     useEffect(() => {
         const timer = setTimeout(() => {
             try {
-                const hasVisited = localStorage.getItem('hasVisited_techstore');
-                if (hasVisited) {
+                const today = new Date().toDateString();
+                const lastVisited = localStorage.getItem('lastVisitedDate_techstore');
+                
+                if (lastVisited === today) {
+                    // Already greeted today, do nothing
+                    return;
+                }
+
+                const hasVisitedEver = localStorage.getItem('hasVisited_techstore');
+
+                if (hasVisitedEver) {
                     toast('Welcome back! Good to see you again.', { icon: '👋', duration: 4000 });
                 } else {
                     localStorage.setItem('hasVisited_techstore', 'true');
@@ -130,6 +139,8 @@ export default function ProductDetailInteractive({
                     const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
                     toast(`${greeting}! Treat yourself to something nice today. 🎁`, { duration: 5000 });
                 }
+                
+                localStorage.setItem('lastVisitedDate_techstore', today);
             } catch (e) {
                 // Ignore local storage errors
             }
