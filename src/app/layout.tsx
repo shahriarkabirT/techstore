@@ -132,7 +132,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                 {/* Facebook Pixel (noscript) - Removed */}
 
                 <NextTopLoader
-                    color="#28292b"
+                    color="#E2725B"
                     initialPosition={0.08}
                     crawlSpeed={200}
                     height={3}
@@ -140,7 +140,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                     showSpinner={false}
                     easing="ease"
                     speed={200}
-                    shadow="0 0 10px #28292b,0 0 5px #555"
+                    shadow="0 0 10px #E2725B,0 0 5px #E2725B"
                 />
                 <ReduxProvider>
                     <AuthProvider>
