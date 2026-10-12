@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyLegacyAdminToken, verifyAccessToken, verifyRefreshToken } from '@/lib/token-verify';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
+import { publicUrl } from '@/lib/publicUrl';
 
 // Initialize Redis only if URLs are provided (to avoid crashing in dev without keys)
 const redis = (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN)
@@ -92,14 +93,14 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
 
     if (isRefreshTokenValid) {
         if (isAuthRoute) {
-            return NextResponse.redirect(new URL('/', request.url));
+            return NextResponse.redirect(publicUrl('/', request));
         }
     }
 
     // If refresh token cookie exists but JWT is expired, clear stale cookies and redirect to login
     if (refreshToken && !isRefreshTokenValid) {
         const clearResponse = isProtectedRoute
-            ? NextResponse.redirect(new URL('/login', request.url))
+            ? NextResponse.redirect(publicUrl('/login', request))
             : NextResponse.next();
         clearResponse.cookies.delete('access_token');
         clearResponse.cookies.delete('refresh_token');
@@ -108,7 +109,7 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
 
     if (!accessToken && !refreshToken) {
         if (isProtectedRoute) {
-            return NextResponse.redirect(new URL('/login', request.url));
+            return NextResponse.redirect(publicUrl('/login', request));
         }
     }
 
@@ -153,14 +154,14 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
         // --- Session Refresh Logic ---
         // Only attempt session refresh if refresh token is still valid
         if (!isAdmin && !accessToken && refreshToken && isRefreshTokenValid) {
-            const refreshUrl = new URL('/api/auth/session-refresh', request.url);
+            const refreshUrl = publicUrl('/api/auth/session-refresh', request);
             refreshUrl.searchParams.set('redirect_to', pathname);
             return NextResponse.redirect(refreshUrl);
         }
         // ----------------------------------
 
         if (!isAdmin) {
-            return NextResponse.redirect(new URL('/login', request.url));
+            return NextResponse.redirect(publicUrl('/login', request));
         }
     }
 
@@ -174,7 +175,7 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
                 redirectPath = '/admin/moderator-dashboard'; // Auto redirect to moderator dashboard
             }
         }
-        return NextResponse.redirect(new URL(redirectPath, request.url));
+        return NextResponse.redirect(publicUrl(redirectPath, request));
     }
 
     return isBaseResponseModified ? baseResponse : NextResponse.next();

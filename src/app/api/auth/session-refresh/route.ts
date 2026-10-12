@@ -3,21 +3,24 @@ import { getAuthCookies, setAuthCookies, clearAuthCookies } from '@/lib/cookies'
 import { verifyRefreshToken, signAccessToken, signRefreshToken } from '@/lib/jwt';
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
+import { publicUrl } from '@/lib/publicUrl';
 
 export async function GET(request: NextRequest) {
-    const redirectUrl = request.nextUrl.searchParams.get('redirect_to') || '/';
+    const rawRedirect = request.nextUrl.searchParams.get('redirect_to') || '/';
+    // Only allow same-site relative paths
+    const redirectUrl = rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : '/';
 
     try {
         const { refreshToken } = await getAuthCookies();
 
         if (!refreshToken) {
-            return NextResponse.redirect(new URL('/login', request.url));
+            return NextResponse.redirect(publicUrl('/login', request));
         }
 
         const decoded = verifyRefreshToken(refreshToken);
 
         if (!decoded) {
-            return NextResponse.redirect(new URL('/login', request.url));
+            return NextResponse.redirect(publicUrl('/login', request));
         }
 
         // Fetch fresh user data from DB
@@ -26,7 +29,7 @@ export async function GET(request: NextRequest) {
 
         if (!freshUser) {
             await clearAuthCookies();
-            return NextResponse.redirect(new URL('/login', request.url));
+            return NextResponse.redirect(publicUrl('/login', request));
         }
 
         // Generate new tokens with FRESH permissions from DB
@@ -43,10 +46,10 @@ export async function GET(request: NextRequest) {
         // Set cookies
         await setAuthCookies(newAccessToken, newRefreshToken);
 
-        return NextResponse.redirect(new URL(redirectUrl, request.url));
+        return NextResponse.redirect(publicUrl(redirectUrl, request));
 
     } catch (error) {
         console.error('Session Refresh Error:', error);
-        return NextResponse.redirect(new URL('/login', request.url));
+        return NextResponse.redirect(publicUrl('/login', request));
     }
 }
