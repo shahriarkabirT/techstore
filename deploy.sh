@@ -16,6 +16,7 @@ echo "📥 Installing dependencies..."
 pnpm install
 
 echo "🔨 Building app..."
+rm -rf .next
 pnpm run build
 
 echo "🔄 Restarting PM2..."
