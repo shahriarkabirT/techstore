@@ -21,7 +21,7 @@ export default function SpeedDial({ initialSettings }: SpeedDialProps) {
 
     useEffect(() => {
         const handleScroll = () => {
-            setShowScrollToTop(window.scrollY > 50);
+            setShowScrollToTop(window.scrollY > window.innerHeight * 0.7);
         };
         const initTimer = setTimeout(() => {
             handleScroll();

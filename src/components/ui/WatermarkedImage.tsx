@@ -11,6 +11,8 @@ interface WatermarkedImageProps {
   imageClassName?: string;
   style?: React.CSSProperties;
   priority?: boolean;
+  quality?: number;
+  sizes?: string;
 }
 
 // Cap canvas size to keep toDataURL() fast and avoid main-thread jank.
@@ -25,6 +27,8 @@ export default function WatermarkedImage({
   imageClassName = "object-cover",
   style,
   priority = false,
+  quality,
+  sizes: sizesProp,
 }: WatermarkedImageProps) {
   const [watermarkedSrc, setWatermarkedSrc] = useState<string | null>(null);
   const idleCallbackRef = useRef<number | null>(null);
@@ -127,7 +131,8 @@ export default function WatermarkedImage({
         fill
         priority={priority}
         className={imageClassName}
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        quality={quality}
+        sizes={sizesProp || "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"}
       />
 
       {/*

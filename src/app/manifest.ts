@@ -3,7 +3,7 @@ import dbConnect from '@/lib/db';
 import Settings from '@/models/Settings';
 
 export default async function manifest(): Promise<MetadataRoute.Manifest> {
-    let brandName = 'Store';
+    let brandName = 'TechStore';
     let iconUrl = '/logo.png';
     
     try {
